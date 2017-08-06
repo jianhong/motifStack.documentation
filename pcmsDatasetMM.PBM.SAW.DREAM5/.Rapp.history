@@ -1,0 +1,67 @@
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/mmc/F178_1.00_2014_09_23_12_02_pm")
+TF <- read.delim("TF_Information.txt")
+TFs <- TF[TF$TF_Species %in% c("Mus_musculus"), ]
+dim(TFs)
+head(TFs)
+tf.s <- TFs[TFs$MSource_Author %in% c("Jolma"), ]
+dim(tf.s)
+for(i in 1:nrow(tf.s)){#
+	pwms <- read.delim(paste("pwms/", as.character(tf.s$Motif_ID)[i], ".txt", sep=""), row.names=1)#
+	total <- 1000#
+	pcm <- floor(t(pwms * total))#
+	pcm <- cbind(rownames(pcm), "|", pcm)#
+	write.table(pcm, paste("pcms3/", paste(as.character(tf.s$TF_Name)[i], as.character(tf.s$Motif_Type)[i], gsub("_1.00", "", as.character(tf.s$Motif_ID)[i]), as.character(tf.s$MSource_Author)[i], sep="_"), ".pcm", sep=""), sep="\t", quote=F, row.names=F, col.names=F)#
+}
+for(i in 1:nrow(tf.s)){#
+	pwms <- read.delim(paste("pwms/", as.character(tf.s$Motif_ID)[i], ".txt", sep=""), row.names=1)#
+	total <- 1000#
+	pcm <- floor(t(pwms * total))#
+	pcm <- cbind(rownames(pcm), "|", pcm)#
+	write.table(pcm, paste("pcms3/", paste(as.character(tf.s$TF_Name)[i], as.character(tf.s$Motif_Type)[i], sep="_"), ".pcm", sep=""), sep="\t", quote=F, row.names=F, col.names=F)#
+}
+dim(tf.s)
+for(i in 1:nrow(tf.s)){#
+	pwms <- read.delim(paste("pwms/", as.character(tf.s$Motif_ID)[i], ".txt", sep=""), row.names=1)#
+	total <- 1000#
+	pcm <- floor(t(pwms * total))#
+	pcm <- cbind(rownames(pcm), "|", pcm)#
+	write.table(pcm, paste("pcms3/", paste(as.character(tf.s$TF_Name)[i], as.character(tf.s$Motif_Type)[i], gsub("_1.00", "", as.character(tf.s$Motif_ID)[i]), sep="_"), ".pcm", sep=""), sep="\t", quote=F, row.names=F, col.names=F)#
+}
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/demo7/pcmsDataset0")
+pcms <- dim()
+pcms <- dir()
+length(pcms)
+pcms <- gsub(".pcm$", "", pcms)
+head(pcms)
+pcms1 <- gsub("^(.*?)_.*$", "\\1", pcms)
+head(pcms1)
+pcms1 <- gsub("^(.*?)_.*$", "\\1", gsub("^Mm_", "", pcms))
+head(pcms1)
+tail(pcms1)
+pcms1
+pcms2 <- table(pcms1)
+head(pcms2)
+pcms3 <- split(pcms, grepl("SELEX", pcms))
+length(pcms3)
+names(pcms3)
+pcms4 <- pcms3; pcms4[[1]] <- gsub("^Mm_", "", pcms3[[1]]); pcms4[[2]] <- gsub("^(.*?)_.*$", "\\1", pcms3[[2]])
+pcms4
+pcms0 <- intersect(pcms4[[1]], pcms4[[2]])
+pcms0
+pcms5 <- mapply(function(p3, p4) p3[p4 %in% pcms0], pcms3, pcms4)
+pcms5
+pcms5 <- unlist(pcms5)
+pcms5 <- paste(pcms5, ".pcm", sep="")
+pcms5
+length(pcms)
+for(i in pcms) if(!i %in% cpms5) unlink(i)
+for(i in pcms) if(!i %in% pcms5) unlink(i)
+getwd()
+toberemove <- pcms[!pcms %in% pcms5]
+toberemove
+pcms <- paste(pcms, ".pcm", sep="")
+toberemove <- pcms[!pcms %in% pcms5]
+toberemove
+for(i in toberemove) unlink(i)
+length(pcms5)
+q("no")

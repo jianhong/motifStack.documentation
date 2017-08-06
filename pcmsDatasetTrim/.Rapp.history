@@ -1,0 +1,157 @@
+library(motifStack)
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/demo8")#
+#
+pcmpath <- "pcmsDataset0"#
+pcms <- readPCM(pcmpath)#
+#
+pfms<-lapply(pcms,pcm2pfm)
+subset_pfms <- pfms[1:6]#
+motifStack(subset_pfms, layout="stack")
+motifStack(subset_pfms, layout="tree", trueDist=TRUE)
+motifStack(pfms[sample(1:length(pfms), 20)], layout="phylog", clabel.leaves=.8, ic.scale=FALSE)
+motifStack(pfms, layout="radialPhylog")
+RGBColors <- col2rgb(colors()[1:length(colors())])#
+RGBColors.light <- colMeans(RGBColors)>mean(colMeans(RGBColors))#
+RGBColors <- rbind(colors()[RGBColors.light][1:328], colors()[!RGBColors.light][1:328])#
+RGBColors <- RGBColors[,sample(1:328, 328)]#
+pairColor <- as.character(RGBColors)#
+#
+pfmList2matrixList <- function(pfms){#
+        m <- lapply(pfms, function(.ele) as(.ele, "matrix"))#
+        names(m) <- unlist(lapply(pfms, function(.ele) .ele@name))#
+        m#
+}#
+getMotIVOut <- function(pfms, cc, align){#
+    jaspar.scores <- MotIV::readDBScores(file.path(find.package("MotIV"), "extdata", "jaspar2010_PCC_SWU.scores"))#
+    d <- MotIV::motifDistances(pfmList2matrixList(pfms), cc=cc, align=align)#
+    hc <- MotIV::motifHclust(d, method="ward.D2")#
+    phylog <- hclust2phylog(hc)#
+    pfms <- pfms[hc$order]#
+    pfms <- DNAmotifAlignment(pfms)#
+    leaveNames <-names(motIVout$phylog$leaves)#
+    dataSource <- factor(grepl("_M", leaveNames))#
+    levels(dataSource) <- c("yellow", "blue") #
+    dataSource <- as.character(dataSource)#
+    algorithm <- factor((!grepl("_M", leaveNames)) + grepl("_bml", leaveNames))#
+    levels(algorithm) <- c("black", "red", "green") #
+    algorithm <- as.character(algorithm)#
+    motifGroup <- factor(gsub("(.*?)_.*$", "\\1", leaveNames))#
+    levels.motifGroup <- levels(motifGroup)#
+    levels(motifGroup) <- pairColor[1:length(levels(motifGroup))]#
+    colors.motifGroup <- levels(motifGroup)#
+    motifGroup <- as.character(motifGroup)#
+    return(list(pfm=pfms, phylog=phylog, #
+                leaveNames=leaveNames, #
+                dataSource=dataSource,#
+                algorithm=algorithm,#
+                motifGroup=motifGroup,#
+                levels.motifGroup=levels.motifGroup,#
+                colors.motifGroup=colors.motifGroup))#
+}#
+#
+motIVout <- getMotIVOut(pfms, "PCC", "SWU")#
+attach(motIVout)#
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=pfm,#
+                               labels.leaves=leaveNames, #
+                               col.leaves.bg=dataSource, #
+                               col.leaves.bg.alpha=.4, #
+                               col.leaves=algorithm, #
+                               col.bg=motifGroup, col.bg.alpha=.3,#
+                               cleaves=.2, circle=1.1, circle.motif=1.6, #
+                               clabel.leaves=.3, angle=358)#
+#
+legend(1.5, 2.4, legend=levels.motifGroup, fill= c(motifStack:::highlightCol(colors.motifGroup, alpha=.3)), border="black", lty=NULL, bty = "n", ncol=2, cex=.4)#
+legend(-2.4, 2.4, legend=c("data source", "Uniprobe", "CIS-BP", "algorithm", "DREAM5", "Seed-And-Wobble", "BEEML"), fill= c("white", "yellow", "blue", "white", "black", "red", "green"), border="white", lty=NULL, bty = "n", cex=.4)#
+detach(motIVout)
+getMotIVOut <- function(pfms, cc, align){#
+    jaspar.scores <- MotIV::readDBScores(file.path(find.package("MotIV"), "extdata", "jaspar2010_PCC_SWU.scores"))#
+    d <- MotIV::motifDistances(pfmList2matrixList(pfms), cc=cc, align=align)#
+    hc <- MotIV::motifHclust(d, method="ward.D2")#
+    phylog <- hclust2phylog(hc)#
+    pfms <- pfms[hc$order]#
+    pfms <- DNAmotifAlignment(pfms)#
+    leaveNames <-names(phylog$leaves)#
+    dataSource <- factor(grepl("_M", leaveNames))#
+    levels(dataSource) <- c("yellow", "blue") #
+    dataSource <- as.character(dataSource)#
+    algorithm <- factor((!grepl("_M", leaveNames)) + grepl("_bml", leaveNames))#
+    levels(algorithm) <- c("black", "red", "green") #
+    algorithm <- as.character(algorithm)#
+    motifGroup <- factor(gsub("(.*?)_.*$", "\\1", leaveNames))#
+    levels.motifGroup <- levels(motifGroup)#
+    levels(motifGroup) <- pairColor[1:length(levels(motifGroup))]#
+    colors.motifGroup <- levels(motifGroup)#
+    motifGroup <- as.character(motifGroup)#
+    return(list(pfm=pfms, phylog=phylog, #
+                leaveNames=leaveNames, #
+                dataSource=dataSource,#
+                algorithm=algorithm,#
+                motifGroup=motifGroup,#
+                levels.motifGroup=levels.motifGroup,#
+                colors.motifGroup=colors.motifGroup))#
+}#
+#
+motIVout <- getMotIVOut(pfms, "PCC", "SWU")#
+attach(motIVout)#
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=pfm,#
+                               labels.leaves=leaveNames, #
+                               col.leaves.bg=dataSource, #
+                               col.leaves.bg.alpha=.4, #
+                               col.leaves=algorithm, #
+                               col.bg=motifGroup, col.bg.alpha=.3,#
+                               cleaves=.2, circle=1.1, circle.motif=1.6, #
+                               clabel.leaves=.3, angle=358)#
+#
+legend(1.5, 2.4, legend=levels.motifGroup, fill= c(motifStack:::highlightCol(colors.motifGroup, alpha=.3)), border="black", lty=NULL, bty = "n", ncol=2, cex=.4)#
+legend(-2.4, 2.4, legend=c("data source", "Uniprobe", "CIS-BP", "algorithm", "DREAM5", "Seed-And-Wobble", "BEEML"), fill= c("white", "yellow", "blue", "white", "black", "red", "green"), border="white", lty=NULL, bty = "n", cex=.4)#
+detach(motIVout)
+?motifStack
+motifStack
+?motifHclust
+hclust
+?hcluster
+names(motifs)
+names(pfms)
+subset_pfms <- pfms[12:17]
+motifStack(subset_pfms, layout="stack")
+motifStack(subset_pfms, layout="tree", trueDist=TRUE)
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/demo8/pcmsDatasetHsSELEX")
+files <- dir(pattern="SELEX")
+length(files)
+file.copy(files, paste("../pcmsDatasetHsMmSELEX/", files, sep=""))
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/demo8/pcmsDatasetMmPBM_SELEX")
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/demo8/pcmsDatasetHsSELEX")
+file.copy(files, paste("../pcmsDatasetHsMmSELEX/Hs_", files, sep=""))
+file.copy(files, paste("../pcmsDatasetHsMmSELEX/Hs_", files, sep=""))
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/demo8/pcmsDatasetMmPBM_SELEX")
+files <- dir(pattern="SELEX")
+file.copy(files, paste("../pcmsDatasetHsMmSELEX/Mm_", files, sep=""))
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/demo8/pcmsDatasetHsMmSELEX")
+files <- dir()
+length(files)
+x <- do.call(rbind, strsplit(files, "_"))
+head(x)
+x2 <- split(x[,2], x[,1])
+x3 <- intersect(x2[[1]], x2[[2]])
+length(x3)
+head(x2[[1]])
+x[,2] <- toupper(x[,2])
+x2 <- split(x[,2], x[,1])
+x3 <- intersect(x2[[1]], x2[[2]])
+length(x3)
+id <- x[,2] %in% x3
+files <- files[id]
+length(files)
+f <- dir()
+f <- f[!f %in% files]
+unlink(f)
+file.rename(files, gsub("_SELEX", "", gsub("_Jolma", "", files)))
+?motifSignature
+motifCloud
+setwd("/Volumes/Macintosh_HD_2/Jianhong/svn/motifStack.docutment/demo8/pcmsDatasetTrim")
+files <- dir(pattern="trimed")
+length(files)
+file.rename(files, gsub("trimed", "trimmed", files))
+library(BiocInstaller)
+biocLite("BiocUpgrade")
+q("no")

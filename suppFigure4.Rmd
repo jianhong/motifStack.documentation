@@ -1,0 +1,432 @@
+---
+title: "Supplemental Figure 4"
+output:
+  pdf_document:
+    fig_caption: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+fn = local({
+  i = 0
+  function(x, cnt=TRUE) {
+    if(cnt) i <<- i + 1
+    paste('Figure 3', LETTERS[i], ': ', x, sep = '')
+  }
+})
+```
+
+
+```{r loadLib, message=FALSE, warning=FALSE, error=FALSE}
+##load the library
+library(motifStack)
+colorSet <- c("Dm"="#00FC00", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
+              "Mm"="brown", "MmDREAM"="blue", "Ms"="#F69156", 
+              "Hs"="#D900D9")
+
+## function to read example data
+getMatAlignOut <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2){
+    pcms <- readPCM(pcmpath)
+    pfms<-lapply(pcms,pcm2pfm)
+    matalign_path <- "./app/matalign-v4a"
+    neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
+    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, "--out", outpath,
+             "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
+    newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
+    phylog <- newick2phylog(newickstrUPGMA, FALSE)
+    leaves <- names(phylog$leaves)
+    motifs <- pfms[leaves]
+    if(!is.na(groupDistance)){
+        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance, min.freq=1, trim=trim)
+        sig <- signatures(motifSig)
+        gpCol <- sigColor(motifSig)
+    }else{
+        motifSig <- NA
+        sig <- NA
+        gpCol <- NA
+    }
+    
+    return(list(phylog=phylog, sig=sig, gpCol=gpCol, motifs=DNAmotifAlignment(motifs), leaves=leaves, unaligned.pfms=motifs))
+}
+
+pfmList2matrixList <- function(pfms){
+        m <- lapply(pfms, function(.ele) as(.ele, "matrix"))
+        names(m) <- unlist(lapply(pfms, function(.ele) .ele@name))
+        m
+}
+
+getMotIVOut <- function(pcmpath, cc, align, groupDistance=.005, trim=0.2){
+    pcms <- readPCM(pcmpath)
+    pfms<-lapply(pcms,pcm2pfm)
+    jaspar.scores <- 
+        MotIV::readDBScores(
+            file.path(".", "app", "scores", 
+                      paste("JaspRand_", cc, "_", align, ".scores", sep="")))
+    d <- MotIV::motifDistances(pfmList2matrixList(pfms), cc=cc, align=align)
+    hc <- MotIV::motifHclust(d)
+    phylog <- hclust2phylog(hc)
+    pfms <- pfms[hc$order]
+    aligned.pfms <- DNAmotifAlignment(pfms)
+    leaveNames <-names(phylog$leaves)
+    leaves <- names(phylog$leaves)
+    motifs <- pfms[leaves]
+    if(!is.na(groupDistance)){
+        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance, min.freq=1, trim=trim)
+        sig <- signatures(motifSig)
+        gpCol <- sigColor(motifSig)
+    }else{
+        motifSig <- NA
+        sig <- NA
+        gpCol <- NA
+    }
+    
+    return(list(phylog=phylog, sig=sig, gpCol=gpCol, motifs=DNAmotifAlignment(motifs), leaves=leaves, unaligned.pfms=motifs))
+}
+
+```
+
+# Supplemental Figure 3A. alignment of *Drosophila* motifs by matAlign
+```{r Fly_B1H, fig.width=8, fig.height=11, dpi=72, fig.cap=fn("by matAlign")}
+gpDis <- 2
+Fly_B1H <- getMatAlignOut("pcmsDatasetFly", groupDistance=gpDis)
+attach(Fly_B1H)
+
+leaveNames <- gsub("^Dm_", "", leaves)
+
+motifPiles(phylog=phylog, motifs, sig, 
+           col.pfms=gpCol, col.pfms.width=.01, 
+           col.pfms2=gpCol, col.pfms2.width=.01, 
+           labels.leaves=leaveNames, 
+           plotIndex=c(FALSE, TRUE), IndexCex=1, 
+           groupDistance=gpDis, clabel.leaves=1)
+
+detach(Fly_B1H)
+```
+
+# Supplemental Figure 3B. alignment of *Drosophila* motifs by MotIV
+
+```{r Fly_B1H.MotIV, fig.width=8, fig.height=11, dpi=72, fig.cap=fn("by MotIV")}
+gpDis <- 0.005 
+Fly_B1H.MotIV <- getMotIVOut("pcmsDatasetFly", 
+                                    cc="ALLR", align="SWU", 
+                                    groupDistance=gpDis)
+attach(Fly_B1H.MotIV)
+
+leaveNames <- gsub("^Dm_", "", leaves)
+motifPiles(phylog=phylog, motifs, sig, 
+           col.pfms=gpCol, col.pfms.width=.01, 
+           col.pfms2=gpCol, col.pfms2.width=.01, 
+           labels.leaves=leaveNames, 
+           plotIndex=c(FALSE, TRUE), IndexCex=1, 
+           groupDistance=gpDis, clabel.leaves=1)
+
+detach(Fly_B1H.MotIV)
+```
+
+# Supplemental Figure 3C. fly vs mouse, by matAlign
+```{r FlyMousePBMSAW, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Fly vs Mouse")}
+gpDis <- 2
+FlyMousePBMSAW <- getMatAlignOut("pcmsDatasetFlyMousePBM.SAW", groupDistance=gpDis, trim=0.2)
+attach(FlyMousePBMSAW)
+
+##set methods color
+species <- gsub("^(Dm|Mm)_.*$", "\\1", leaves)
+species <- colorSet[species]##c("Dm/FFS/B1H", "Mm/Uniprobe/PBM/Seed-And-Wobble")
+
+leaveNames <- gsub("^(Dm|Mm)_", "", leaves)
+
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=sig, 
+                               col.bg=species, col.bg.alpha=.3, 
+                               col.inner.label.circle=gpCol, 
+                               inner.label.circle.width=0.02, 
+                               labels.leaves=leaveNames, 
+                               cleaves=.1, circle=1.35, circle.motif=1.6, 
+                               clabel.leaves=.5, motifScale="logarithmic", 
+                               angle=358, plotIndex=TRUE, IndexCex=.6, 
+                               groupDistance=gpDis)
+
+legend(-2.2, 2.4, legend=c("Dm/FFS/B1H", "Mm/Uniprobe/PBM/\nSeed-And-Wobble"), 
+       fill= highlightCol(colorSet[c("Dm", "Mm")], alpha=.3), 
+       border="white", lty=NULL, bty = "n")
+
+detach(FlyMousePBMSAW)
+```
+
+# Supplemental Figure 3D. fly vs human, by matAlign
+```{r FlyHuman, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Fly vs Human")}
+gpDis <- 2
+FlyHuman <- getMatAlignOut("pcmsDatasetFlyHuman", groupDistance=gpDis)
+attach(FlyHuman)
+
+##set methods color
+species <- gsub("^(Dm|Hs)_.*$", "\\1", leaves)
+species <- colorSet[species] ##c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX")
+
+leaveNames <- gsub("^(Dm|Hs)_", "", leaves)
+
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=sig, col.bg=species, 
+                               col.bg.alpha=.3, col.inner.label.circle=gpCol, 
+                               inner.label.circle.width=0.04, 
+                               labels.leaves=leaveNames, 
+                               cleaves=.1, circle=1.35, circle.motif=1.8, 
+                               clabel.leaves=.5, motifScale="logarithmic", 
+                               angle=358, plotIndex=TRUE, IndexCex=.6, 
+                               groupDistance=gpDis)
+
+legend(-2, 2.2, legend=c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX"), 
+       fill=highlightCol(colorSet[c("Dm", "Hs")], alpha=.3), 
+       border="white", lty=NULL, bty = "n")
+
+detach(FlyHuman)
+```
+
+
+# Supplemental Figure 3E. mouse selex vs mouse pbm/sw vs mouse pbm dream5
+```{r MmPBM_SELEX, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Mouse data from different methods")}
+gpDis <- 2
+MmPBM_SELEX <- getMatAlignOut("pcmsDatasetMmPBM_SELEX", groupDistance=gpDis)
+attach(MmPBM_SELEX)
+
+##set methods color
+methods <- factor(grepl("_SELEX", leaves) + grepl("_M\\d{4}", leaves))
+levels(methods) <- c("Mm", "MmDREAM", "Ms")
+levels(methods) <- colorSet[levels(methods)] ##c("PBM/Uniprobe/Seed-And-Wobble", "PBM/CIS-BP/DREAM5", "SELEX/CIS-BP")
+methods <- as.character(methods)
+
+leaveNames <- gsub("_(SELEX|PBM)", "", gsub("_(Jolma|Berger)", "", leaves))
+
+## calculate average of top 8 position information content for each motif
+icgp <- sapply(sapply(unaligned.pfms, getIC), function(.ele) mean(sort(.ele, decreasing=TRUE)[1:min(8, length(.ele))]))
+icgp.ranges <- range(icgp)
+icgp <- cut(icgp, 10, labels=colorRampPalette(c("green", "black", "red"))(10))
+icgp.image <- as.raster(matrix(rev(levels(icgp)), ncol=1))
+icgp <- as.character(icgp)
+
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=sig, 
+                               col.bg=methods, col.bg.alpha=.3, 
+                               col.inner.label.circle=gpCol, 
+                               inner.label.circle.width=0.02, 
+                               labels.leaves=leaveNames, cleaves=.1, 
+                               circle=.95, circle.motif=1.8, clabel.leaves=.8,
+                               motifScale="logarithmic", angle=358, 
+                               plotIndex=TRUE, IndexCex=.6, groupDistance=gpDis)
+
+legend(-2, 2.2, legend=c("Mm/Uniprobe/PBM/Seed-And-Wobble", 
+                         "Mm/CIS-BP/PBM/DREAM5", "Mm/CIS-BP/SELEX"), 
+       fill=highlightCol(colorSet[c("Mm", "MmDREAM", "Ms")], .3), 
+       border="white", lty=NULL, bty = "n")
+```
+
+```{r MmPBM_SELEX.ALL, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Mouse data from different methods", FALSE)}
+motifCircos(phylog=phylog, pfms=motifs, col.tree.bg=methods, 
+            col.tree.bg.alpha=.3, r.rings=c(.1, .1), 
+            col.rings=list(icgp, rep("white", length(icgp))), 
+            col.inner.label.circle=gpCol, inner.label.circle.width=0.02, 
+            labels.leaves=leaveNames, cleaves=.1, r.tree=1, r.leaves=.5, 
+            clabel.leaves=.9, motifScale="logarithmic", angle=358, 
+            plotIndex=TRUE, IndexCex=.6, groupDistance=gpDis)
+
+legend(-2.4, 2.4, legend=c("Mm/Uniprobe/PBM/Seed-And-Wobble", 
+                           "Mm/CIS-BP/PBM/DREAM5", "Mm/CIS-BP/SELEX"), 
+       fill=highlightCol(colorSet[c("Mm", "MmDREAM", "Ms")], .3), 
+       border="white", lty=NULL, bty = "n")
+
+text(2.05, 2.3, labels="Information Content")
+rasterImage(icgp.image, 2, 1.8, 2.04, 2.2, interpolate = FALSE)
+text(c(2.05, 2.05), c(1.8, 2.2), labels=format(icgp.ranges, digits=3), adj=0)
+
+detach(MmPBM_SELEX)
+```
+
+# Supplemental Figure 3F. mouse selex vs mouse pbm/sw vs mouse pbm dream5, by motIV
+```{r MmPBM_SELE.MotIV, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("by MotIV")}
+gpDis <- 0.005 
+MmPBM_SELEX.MotIV <- getMotIVOut("pcmsDatasetMmPBM_SELEX", 
+                                 cc="ALLR", align="SWU",
+                                 groupDistance=gpDis)
+attach(MmPBM_SELEX.MotIV)
+
+##set methods color
+methods <- factor(grepl("_SELEX", leaves) + grepl("_M\\d{4}", leaves))
+levels(methods) <- c("Mm", "MmDREAM", "Ms")
+levels(methods) <- colorSet[levels(methods)] ##c("PBM/Uniprobe/Seed-And-Wobble", "PBM/CIS-BP/DREAM5", "SELEX/CIS-BP")
+methods <- as.character(methods)
+
+leaveNames <- gsub("_(SELEX|PBM)", "", gsub("_(Jolma|Berger)", "", leaves))
+
+## calculate average of top 8 position information content for each motif
+icgp <- sapply(sapply(unaligned.pfms, getIC), function(.ele) mean(sort(.ele, decreasing=TRUE)[1:min(8, length(.ele))]))
+icgp.ranges <- range(icgp)
+icgp <- cut(icgp, 10, labels=colorRampPalette(c("green", "black", "red"))(10))
+icgp.image <- as.raster(matrix(rev(levels(icgp)), ncol=1))
+icgp <- as.character(icgp)
+
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=sig, 
+                               col.bg=methods, col.bg.alpha=.3, 
+                               col.inner.label.circle=gpCol, 
+                               inner.label.circle.width=0.02, 
+                               labels.leaves=leaveNames, cleaves=.1, 
+                               circle=.95, circle.motif=1.8, clabel.leaves=.8,
+                               motifScale="logarithmic", angle=358, 
+                               plotIndex=TRUE, IndexCex=.6, groupDistance=gpDis)
+
+legend(-2, 2.2, legend=c("Mm/Uniprobe/PBM/Seed-And-Wobble", 
+                         "Mm/CIS-BP/PBM/DREAM5", "Mm/CIS-BP/SELEX"), 
+       fill=highlightCol(colorSet[c("Mm", "MmDREAM", "Ms")], .3), 
+       border="white", lty=NULL, bty = "n")
+
+```
+
+
+```{r MmPBM_SELEX.MotIV.ALL, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Mouse data from different methods", FALSE)}
+motifCircos(phylog=phylog, pfms=motifs, col.tree.bg=methods, 
+            col.tree.bg.alpha=.3, r.rings=c(.1, .1), 
+            col.rings=list(icgp, rep("white", length(icgp))), 
+            col.inner.label.circle=gpCol, inner.label.circle.width=0.02, 
+            labels.leaves=leaveNames, cleaves=.1, r.tree=1, r.leaves=.5, 
+            clabel.leaves=.9, motifScale="logarithmic", angle=358, 
+            plotIndex=TRUE, IndexCex=.6, groupDistance=gpDis)
+
+legend(-2.4, 2.4, legend=c("Mm/Uniprobe/PBM/Seed-And-Wobble", 
+                           "Mm/CIS-BP/PBM/DREAM5", "Mm/CIS-BP/SELEX"), 
+       fill=highlightCol(colorSet[c("Mm", "MmDREAM", "Ms")], .3), 
+       border="white", lty=NULL, bty = "n")
+
+text(2.05, 2.3, labels="Information Content")
+rasterImage(icgp.image, 2, 1.8, 2.04, 2.2, interpolate = FALSE)
+text(c(2.05, 2.05), c(1.8, 2.2), labels=format(icgp.ranges, digits=3), adj=0)
+
+detach(MmPBM_SELEX.MotIV)
+```
+
+# Supplemental Figure 3G. Engrailed orthologs, by matAlign
+```{r EN, fig.width=8, fig.height=4, dpi=72, fig.cap=fn("En")}
+gpDis <- 2
+EN <- getMatAlignOut("pcmsDatasetEn", groupDistance=gpDis)
+attach(EN)
+
+##set methods color
+species <- gsub("^(Dm|Hs|Mm).*?$", "\\1", leaves)
+species[grepl("_M\\d+", leaves) & species=="Mm"] <- "MmDREAM"
+species <- colorSet[species] ##c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX", "Mm/Uniprobe/PBM/\nSeed-And-Wobble")
+
+leaveNames <- gsub("^(Dm|Mm|Hs)_", "", leaves)
+
+motifPiles(phylog=phylog, motifs, r.tree=.5, sig, 
+           col.tree=species, col.leaves=species, 
+           col.pfms2=gpCol, col.pfms2.width=.01, 
+           labels.leaves=leaveNames, plotIndex=TRUE, 
+           IndexCex=2, groupDistance=gpDis, clabel.leaves=2)
+legend("topleft", legend=c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX", 
+                           "Mm/Uniprobe/PBM/\nSeed-And-Wobble", 
+                           "Mm/CIS-BP/PBM/Dream5"), 
+       fill=colorSet[c("Dm", "Hs", "Mm", "MmDREAM")], 
+       border="white", lty=NULL, bty = "n", cex=.5)
+
+detach(EN)
+```
+
+
+# Supplemental Figure 3H. Engrailed orthologs, by motIV 
+```{r EN.MotIV, fig.width=8, fig.height=4, dpi=72, fig.cap=fn("En.MotIV")}
+gpDis <- 0.005 
+EN.MotIV <- getMotIVOut("pcmsDatasetEn", 
+                                    cc="ALLR", align="SWU", 
+                                    groupDistance=gpDis)
+attach(EN.MotIV)
+
+##set methods color
+species <- gsub("^(Dm|Hs|Mm).*?$", "\\1", leaves)
+species[grepl("_M\\d+", leaves) & species=="Mm"] <- "MmDREAM"
+species <- colorSet[species] ##c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX", "Mm/Uniprobe/PBM/\nSeed-And-Wobble")
+
+leaveNames <- gsub("^(Dm|Mm|Hs)_", "", leaves)
+
+motifPiles(phylog=phylog, motifs, r.tree=.5, sig, 
+           col.tree=species, col.leaves=species, 
+           col.pfms2=gpCol, col.pfms2.width=.01, 
+           labels.leaves=leaveNames, plotIndex=TRUE, 
+           IndexCex=2, groupDistance=gpDis, clabel.leaves=2)
+legend(0.1, 0.65, legend=c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX", 
+                           "Mm/Uniprobe/PBM/\nSeed-And-Wobble", 
+                           "Mm/CIS-BP/PBM/Dream5"), 
+       fill=colorSet[c("Dm", "Hs", "Mm", "MmDREAM")], 
+       border="white", lty=NULL, bty = "n", cex=.5)
+
+detach(EN.MotIV)
+```
+
+# Supplemental Figure 3I. fly vs ms vs hum matAlign
+```{r FlyMousePBMHuman, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Fly vs Mouse vs Human")}
+gpDis <- 2.5
+FlyMousePBMHuman <- getMatAlignOut("pcmsDatasetFlyMousePBMHuman",
+                                   groupDistance=gpDis)
+attach(FlyMousePBMHuman)
+
+##set methods color
+species <- factor(gsub("^(Dm|Mm|Hs).*$", "\\1", leaves))
+##c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX", "Mm/Uniprobe/PBM/Seed-And-Wobble")
+levels(species) <- colorSet[c("Dm", "Hs", "Mm")] 
+species <- as.character(species)
+
+leaveNames <- gsub("^(Dm|Mm|Hs)_", "", leaves)
+
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=sig, 
+                               col.bg=species, col.bg.alpha=.3, 
+                               col.inner.label.circle=gpCol, 
+                               inner.label.circle.width=0.02, 
+                               labels.leaves=leaveNames, 
+                               cleaves=.1, circle=1.5, circle.motif=1.8, 
+                               clabel.leaves=.5, motifScale="logarithmic", 
+                               angle=358, plotIndex=TRUE, IndexCex=.6, 
+                               groupDistance=gpDis)
+
+legend(-2, 2.2, 
+       legend=c("Dm/FFS/B1H", 
+                "Mm/Uniprobe/PBM/Seed-And-Wobble", 
+                "Hs/CIS-BP/SELEX"), 
+       fill= highlightCol(colorSet[c("Dm", "Hs", "Mm")], alpha=.3), 
+       border="white", lty=NULL, bty = "n")
+
+detach(FlyMousePBMHuman)
+```
+
+# Supplemental Figure 3J. fly vs ms vs hum motIV
+```{r FlyMousePBMHuman.MotIV, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Fly vs Mouse vs Human by MotIV")}
+gpDis <- 0.005
+FlyMousePBMHuman.MotIV <- getMotIVOut("pcmsDatasetFlyMousePBMHuman", 
+                                      cc="ALLR", align="SWU", 
+                                      groupDistance=gpDis)
+attach(FlyMousePBMHuman.MotIV)
+
+##set methods color
+species <- factor(gsub("^(Dm|Mm|Hs).*$", "\\1", leaves))
+##c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX", "Mm/Uniprobe/PBM/Seed-And-Wobble")
+levels(species) <- colorSet[c("Dm", "Hs", "Mm")] 
+species <- as.character(species)
+
+leaveNames <- gsub("^(Dm|Mm|Hs)_", "", leaves)
+
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=sig, 
+                               col.bg=species, col.bg.alpha=.3, 
+                               col.inner.label.circle=gpCol, 
+                               inner.label.circle.width=0.02, 
+                               labels.leaves=leaveNames, 
+                               cleaves=.1, circle=1.5, circle.motif=1.8, 
+                               clabel.leaves=.5, motifScale="logarithmic", 
+                               angle=358, plotIndex=TRUE, IndexCex=.6, 
+                               groupDistance=gpDis)
+
+legend(-2, 2.2, 
+       legend=c("Dm/FFS/B1H", 
+                "Mm/Uniprobe/PBM/Seed-And-Wobble", 
+                "Hs/CIS-BP/SELEX"), 
+       fill= highlightCol(colorSet[c("Dm", "Hs", "Mm")], alpha=.3), 
+       border="white", lty=NULL, bty = "n")
+
+detach(FlyMousePBMHuman.MotIV)
+```
+
+```{r}
+sessionInfo()
+```

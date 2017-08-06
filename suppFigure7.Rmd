@@ -1,0 +1,100 @@
+---
+title: "Supplemental Figure 7"
+output: 
+  pdf_document:
+    fig_caption: yes
+    toc: yes
+---
+```{r setup, include=FALSE}
+library(knitr)
+opts_knit$set(progress=FALSE, verbose=FALSE)
+opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8)
+```
+```{r loadLib, message=FALSE, warning=FALSE, error=FALSE}
+##load the library
+library(motifStack)
+```
+```{r dataInput}
+getMatAlignOut <- function(pcmpath, outpath="output", 
+                          groupDistance=NA, trim=0.2){
+    pcms <- readPCM(pcmpath)
+    pfms<-lapply(pcms,pcm2pfm)
+    matalign_path <- "./app/matalign-v4a"
+    neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
+    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, 
+                 "--out", outpath,
+                 "--matalign", matalign_path, 
+                 "--neighbor", neighbor_path, 
+                 "--tree","UPGMA"))
+    newickstrUPGMA <- 
+        readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
+    phylog <- newick2phylog(newickstrUPGMA, FALSE)
+    leaves <- names(phylog$leaves)
+    motifs <- pfms[leaves]
+    if(!is.na(groupDistance)){
+        motifSig <- 
+            motifSignature(motifs, phylog, 
+                           groupDistance=groupDistance, 
+                           min.freq=1, trim=trim)
+        sig <- signatures(motifSig)
+        gpCol <- sigColor(motifSig)
+    }else{
+        motifSig <- NA
+        sig <- NA
+        gpCol <- NA
+    }
+    
+    return(list(phylog=phylog, sig=sig, gpCol=gpCol, 
+                motifs=DNAmotifAlignment(motifs), 
+                leaves=leaves, 
+                unaligned.pfms=motifs))
+}
+pcmpath <- dir("pcmsUni", include.dirs=TRUE)
+matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
+                      getMatAlignOut, groupDistance=4)
+description <- c("## Dimeric motifs separated from monomeric motifs from the same TF\nFor most dimeric clusters, one or more monomeric motifs cluster with a Drosophilar motif, suggesting that the absence of a fly TF in a dimeric cluster may be a methological difference rather than a biological one.", "", "", "", "", "", "There is no monomeric motif in mammals.", "The dimeric motif cluster is different from the above clusters. There are overlaps for the subunits of monomeric motif.", "For MEOX/LHX cluster, there are some exceptions like LHX6_M7193 and Lhx_M7636. The subunit of both has stong G after TAATT comparing to other monomeric motifs with stong A after TAATT.", "### Difference by platform.\nThe absence of a fly TF in a dimeric cluster may be a methological difference rather than a biological one.", "", "", "## Unique clusters", "## Cleaned unique clusters")
+colorSet <- c("Dm"="#00FC00", 
+              "Mm"="brown", "Ms"="#F69156", 
+              "Hs"="#D900D9")
+
+## kexpand is function to extend knitr.
+# kexpand<-function(.ele, id, cap, figheight, des){
+#     text <- paste("{{des}}\n```{r {{cap}},fig.cap='{{cap}}',fig.height={{figheight}},echo=",
+#                   ifelse(id==1,"TRUE","FALSE"),
+#                   "}\n
+# leaveNames <- gsub('^(Dm|Mm|Ms|Hs)_', '', .ele$leaves)\n
+# species <- colorSet[gsub(\"^(Dm|Mm|Ms|Hs).*$\", \"\\\\1\", .ele$leaves)]\n
+# motifPiles(phylog=.ele$phylog, .ele$motifs, 
+#            .ele$sig, 
+#            col.tree=species, col.leaves=species, 
+#            col.pfms2=.ele$gpCol, 
+#            col.pfms2.width=.01, labels.leaves=leaveNames, 
+#            plotIndex=c(FALSE,TRUE), IndexCex=1.5, 
+#            groupDistance=4, clabel.leaves=3)\n
+# ```\n", sep="")
+#     cat(knit(text=knit_expand(text=text)))
+# }
+```
+```{r expand, echo=FALSE}
+kexpand<-function(.ele, id, cap, figheight, des){
+    text <- paste("{{des}}\n```{r {{cap}},fig.cap='{{cap}}',fig.height={{figheight}},echo=",
+                  ifelse(id==1,"TRUE","FALSE"),
+                  "}\n
+leaveNames <- gsub('^(Dm|Mm|Ms|Hs)_', '', .ele$leaves)\n
+species <- colorSet[gsub(\"^(Dm|Mm|Ms|Hs).*$\", \"\\\\1\", .ele$leaves)]\n
+motifPiles(phylog=.ele$phylog, .ele$motifs, 
+           .ele$sig, 
+           col.tree=species, col.leaves=species, 
+           col.pfms2=.ele$gpCol, 
+           col.pfms2.width=.01, labels.leaves=leaveNames, 
+           plotIndex=c(FALSE,TRUE), IndexCex=1.5, 
+           groupDistance=4, clabel.leaves=3)\n
+```\n", sep="")
+    cat(knit(text=knit_expand(text=text)))
+}
+```
+```{r plots, results='asis'}
+sta <- mapply(function(.ele, name, ID, des){
+    kexpand(.ele, id=ID, cap=name, figheight=ceiling(.25*length(.ele$leaves)), des)
+}, matAlignOut, pcmpath, 1:length(pcmpath), description)
+```

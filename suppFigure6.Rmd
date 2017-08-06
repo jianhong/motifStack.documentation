@@ -1,0 +1,69 @@
+---
+title: "Supplemental Figure 6"
+output:
+  pdf_document:
+    fig_caption: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+fn = local({
+  i = 0
+  function(x) {
+    i <<- i + 1
+    paste('Figure', i, ': ', x, sep = '')
+  }
+})
+```
+
+
+```{r loadLib, message=FALSE, warning=FALSE, error=FALSE}
+##load the library
+library(motifStack)
+
+colorSet <- c("Dm"="#00FC00", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
+              "Mm"="brown", "MmDREAM"="blue", "Ms"="#F69156", 
+              "Hs"="#D900D9")
+
+## function to read example data
+readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2){
+    pcms <- readPCM(pcmpath)
+    pfms<-lapply(pcms,pcm2pfm)
+    matalign_path <- "./app/matalign-v4a"
+    neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
+    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, "--out", outpath,
+             "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
+    newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
+    phylog <- newick2phylog(newickstrUPGMA, FALSE)
+    leaves <- names(phylog$leaves)
+    motifs <- pfms[leaves]
+    if(!is.na(groupDistance)){
+        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance, min.freq=1, trim=trim)
+        sig <- signatures(motifSig)
+        gpCol <- sigColor(motifSig)
+    }else{
+        motifSig <- NA
+        sig <- NA
+        gpCol <- NA
+    }
+    
+    return(list(phylog=phylog, sig=sig, gpCol=gpCol, motifs=DNAmotifAlignment(motifs, minimalConsensus=3), leaves=leaves, unaligned.pfms=motifs))
+}
+
+```
+
+```{r samples, fig.width=6, fig.height=3, dpi=150}
+gpDis <- 2.5
+samples <- readDataDoAna("pcmsDatasetSamples", groupDistance=gpDis)
+
+attach(samples)
+leaveCols <- colorSet[gsub("^(Dm|Mm|Hs)_.*$", "\\1", leaves)]
+leaves <- gsub("Dm_cluster", "cluster", leaves)
+motifPiles(phylog=phylog, motifs, sig, groupDistance = gpDis, 
+           col.pfms2 = gpCol, col.pfms2.width = 0.02, 
+           labels.leaves=leaves, col.leaves=leaveCols, col.tree=leaveCols,
+           plotIndex=c(FALSE, TRUE), IndexCex=1.5, clabel.leaves=1.5)
+
+detach(samples)
+```
+
