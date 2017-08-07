@@ -96,7 +96,7 @@ getMotIVOut <- function(pcmpath, cc, align, groupDistance=.005, trim=0.2){
 
 ```
 
-# Supplementary Figure 3A. alignment of *Drosophila* motifs by matAlign
+# Supplementary Figure 4A. alignment of *Drosophila* motifs by matAlign
 ```{r Fly_B1H, fig.width=8, fig.height=11, dpi=72, fig.cap=fn("by matAlign")}
 gpDis <- 2
 Fly_B1H <- getMatAlignOut("pcmsDatasetFly", groupDistance=gpDis)
@@ -114,7 +114,7 @@ motifPiles(phylog=phylog, motifs, sig,
 detach(Fly_B1H)
 ```
 
-# Supplementary Figure 3B. alignment of *Drosophila* motifs by MotIV
+# Supplementary Figure 4B. alignment of *Drosophila* motifs by MotIV
 
 ```{r Fly_B1H.MotIV, fig.width=8, fig.height=11, dpi=72, fig.cap=fn("by MotIV")}
 gpDis <- 0.005 
@@ -134,7 +134,7 @@ motifPiles(phylog=phylog, motifs, sig,
 detach(Fly_B1H.MotIV)
 ```
 
-# Supplementary Figure 3C. fly vs mouse, by matAlign
+# Supplementary Figure 4C. fly vs mouse, by matAlign
 ```{r FlyMousePBMSAW, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Fly vs Mouse")}
 gpDis <- 2
 FlyMousePBMSAW <- getMatAlignOut("pcmsDatasetFlyMousePBM.SAW", 
@@ -164,7 +164,7 @@ legend(-2.2, 2.4, legend=c("Dm/FFS/B1H", "Mm/Uniprobe/PBM/\nSeed-And-Wobble"),
 detach(FlyMousePBMSAW)
 ```
 
-# Supplementary Figure 3D. fly vs human, by matAlign
+# Supplementary Figure 4D. fly vs human, by matAlign
 ```{r FlyHuman, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Fly vs Human")}
 gpDis <- 2
 FlyHuman <- getMatAlignOut("pcmsDatasetFlyHuman", groupDistance=gpDis)
@@ -193,7 +193,7 @@ detach(FlyHuman)
 ```
 
 
-# Supplementary Figure 3E. mouse selex vs mouse pbm/sw vs mouse pbm dream5
+# Supplementary Figure 4E. mouse selex vs mouse pbm/sw vs mouse pbm dream5
 ```{r MmPBM_SELEX, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Mouse data from different methods")}
 gpDis <- 2
 MmPBM_SELEX <- getMatAlignOut("pcmsDatasetMmPBM_SELEX", groupDistance=gpDis)
@@ -252,7 +252,7 @@ text(c(2.05, 2.05), c(1.8, 2.2), labels=format(icgp.ranges, digits=3), adj=0)
 detach(MmPBM_SELEX)
 ```
 
-# Supplementary Figure 3F. mouse selex vs mouse pbm/sw vs mouse pbm dream5, by motIV
+# Supplementary Figure 4F. mouse selex vs mouse pbm/sw vs mouse pbm dream5, by motIV
 ```{r MmPBM_SELE.MotIV, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("by MotIV")}
 gpDis <- 0.005 
 MmPBM_SELEX.MotIV <- getMotIVOut("pcmsDatasetMmPBM_SELEX", 
@@ -315,7 +315,7 @@ text(c(2.05, 2.05), c(1.8, 2.2), labels=format(icgp.ranges, digits=3), adj=0)
 detach(MmPBM_SELEX.MotIV)
 ```
 
-# Supplementary Figure 3G. Engrailed orthologs, by matAlign
+# Supplementary Figure 4G. Engrailed orthologs, by matAlign
 ```{r EN, fig.width=8, fig.height=4, dpi=72, fig.cap=fn("En")}
 gpDis <- 2
 EN <- getMatAlignOut("pcmsDatasetEn", groupDistance=gpDis)
@@ -343,7 +343,7 @@ detach(EN)
 ```
 
 
-# Supplementary Figure 3H. Engrailed orthologs, by motIV 
+# Supplementary Figure 4H. Engrailed orthologs, by motIV 
 ```{r EN.MotIV, fig.width=8, fig.height=4, dpi=72, fig.cap=fn("En.MotIV")}
 gpDis <- 0.005 
 EN.MotIV <- getMotIVOut("pcmsDatasetEn", 
@@ -373,7 +373,7 @@ legend(0.1, 0.65, legend=c("Dm/FFS/B1H", "Hs/CIS-BP/SELEX",
 detach(EN.MotIV)
 ```
 
-# Supplementary Figure 3I. fly vs ms vs hum matAlign
+# Supplementary Figure 4I. fly vs ms vs hum matAlign
 ```{r FlyMousePBMHuman, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Fly vs Mouse vs Human")}
 gpDis <- 2.5
 FlyMousePBMHuman <- getMatAlignOut("pcmsDatasetFlyMousePBMHuman",
@@ -408,7 +408,7 @@ legend(-2, 2.2,
 detach(FlyMousePBMHuman)
 ```
 
-# Supplementary Figure 3J. fly vs ms vs hum motIV
+# Supplementary Figure 4J. fly vs ms vs hum motIV
 ```{r FlyMousePBMHuman.MotIV, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Fly vs Mouse vs Human by MotIV")}
 gpDis <- 0.005
 FlyMousePBMHuman.MotIV <- getMotIVOut("pcmsDatasetFlyMousePBMHuman", 
