@@ -1,8 +1,12 @@
 ---
-title: "Supplemental Figure 5"
+title: "Supplementary Figure 5"
 output: 
   pdf_document:
     fig_caption: yes
+    toc: yes
+  html_document:
+    fig_caption: yes
+    self_contained: no
     toc: yes
 ---
 

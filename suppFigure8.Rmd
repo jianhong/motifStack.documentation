@@ -1,20 +1,16 @@
 ---
-title: "Supplemental Figure 8"
+title: "Supplementary Figure 8"
 output:
   pdf_document:
     fig_caption: yes
+    toc: no
+    includes:
+      in_header: header.tex
+  html_document:
+    fig_caption: yes
+    self_contained: no
     toc: yes
 ---
-
-```{r setup, include=FALSE}
-fn = local({
-  i = 0
-  function(x) {
-    i <<- i + 1
-    paste('Figure', i, ': ', x, sep = '')
-  }
-})
-```
 
 
 ```{r loadLib, message=FALSE, warning=FALSE, error=FALSE}
@@ -39,7 +35,8 @@ readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2
     leaves <- names(phylog$leaves)
     motifs <- pfms[leaves]
     if(!is.na(groupDistance)){
-        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance, min.freq=1, trim=trim)
+        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance, 
+                                   min.freq=1, trim=trim)
         sig <- signatures(motifSig)
         gpCol <- sigColor(motifSig)
     }else{
@@ -48,12 +45,14 @@ readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2
         gpCol <- NA
     }
     
-    return(list(phylog=phylog, sig=sig, gpCol=gpCol, motifs=DNAmotifAlignment(motifs, minimalConsensus=3), leaves=leaves, unaligned.pfms=motifs))
+    return(list(phylog=phylog, sig=sig, gpCol=gpCol, 
+                motifs=DNAmotifAlignment(motifs, minimalConsensus=3), 
+                leaves=leaves, unaligned.pfms=motifs))
 }
 
 ```
 
-```{r Fly_DNA, fig.width=6, fig.height=6, dpi=150}
+```{r Fly_DNA, fig.width=6, fig.height=6, dpi=150, fig.cap="__Supplementary Figure 8__: Species-specific motifs in the HD family"}
 gpDis <- 2
 Fly_DNA <- readDataDoAna("pcmsDatasetFly", groupDistance=gpDis)
 unUnique <- Fly_DNA$sig

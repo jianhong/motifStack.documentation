@@ -1,20 +1,16 @@
 ---
-title: "Supplemental Figure 6"
+title: "Supplementary Figure 6"
 output:
   pdf_document:
     fig_caption: yes
-    toc: yes
+    toc: no
+    includes:
+      in_header: header.tex
+  html_document:
+    fig_caption: yes
+    self_contained: no
+    toc: no
 ---
-
-```{r setup, include=FALSE}
-fn = local({
-  i = 0
-  function(x) {
-    i <<- i + 1
-    paste('Figure', i, ': ', x, sep = '')
-  }
-})
-```
 
 
 ```{r loadLib, message=FALSE, warning=FALSE, error=FALSE}
@@ -38,7 +34,8 @@ readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2
     leaves <- names(phylog$leaves)
     motifs <- pfms[leaves]
     if(!is.na(groupDistance)){
-        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance, min.freq=1, trim=trim)
+        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance, 
+                                   min.freq=1, trim=trim)
         sig <- signatures(motifSig)
         gpCol <- sigColor(motifSig)
     }else{
@@ -47,12 +44,14 @@ readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2
         gpCol <- NA
     }
     
-    return(list(phylog=phylog, sig=sig, gpCol=gpCol, motifs=DNAmotifAlignment(motifs, minimalConsensus=3), leaves=leaves, unaligned.pfms=motifs))
+    return(list(phylog=phylog, sig=sig, gpCol=gpCol, 
+                motifs=DNAmotifAlignment(motifs, minimalConsensus=3), 
+                leaves=leaves, unaligned.pfms=motifs))
 }
 
 ```
 
-```{r samples, fig.width=6, fig.height=3, dpi=150}
+```{r samples, fig.width=6, fig.height=3, dpi=150, fig.cap="__Supplementary Figure 6__: Examples of specific motifs for _Drosophila_ or human/mouse"}
 gpDis <- 2.5
 samples <- readDataDoAna("pcmsDatasetSamples", groupDistance=gpDis)
 
