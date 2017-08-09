@@ -13,10 +13,8 @@ output:
 ---
 ```{r setup, include=FALSE}
 fn = local({
-  i = 0
-  function(x) {
-    i <<- i + 1
-    paste('__Supplementary Figure 2', LETTERS[i], '__: ', x, sep = '')
+  function(x, letter, auto=FALSE) {
+    paste('__Supplementary Figure 2', letter, '__: ', x, sep = '')
   }
 })
 ```
@@ -41,7 +39,7 @@ motifStack is designed to show multiple motifs in same canvas and it is simple. 
 Using aligned motifs can help us to compare grouped motifs (default in motifStack function). DNAmotifAlignment can align DNA motifs for plotting based on their phylogeny. The motifs will be trimmed by Kullback-Leibler divergency to background (information content, IC) at both ends before the alignment without gap by comparison of the average log-likelihood ratio (ALLR) for each position. 
 
 ### Supplementary Figure 2A
-```{r stackLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("stack layout of motifStack")}
+```{r stackLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("stack layout of motifStack", "A")}
 subset_pfms <- pfms[10:15]
 motifStack(subset_pfms, layout="stack")
 ```
@@ -50,14 +48,14 @@ motifStack(subset_pfms, layout="stack")
 
 The distance tree could show the relationship among motifs. motifStack calculate the distance of motifs in background by MotIV:::motifDistances, which implemented STAMP. We can simply change the style of layout to show the distance among motifs.
 
-```{r treeLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("tree layout of motifStack")}
+```{r treeLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("tree layout of motifStack", "B")}
 ##using default setting of MotIV to do cluster and show results
 motifStack(subset_pfms, layout="tree", trueDist=TRUE)
 ```
 
 ### Supplementary Figure 2C
 The tree-view style needs enough margin to show the logo name and logo position. If you want to show more motifs, you would want to try phylogeny style.
-```{r phylogLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("phylog layout of motifStack")}
+```{r phylogLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("phylog layout of motifStack", "C")}
 ##try different style of sequence logo
 motifStack(pfms[sample(1:length(pfms), 20)], layout="phylog", clabel.leaves=.8,
            f.logo=0.6, ic.scale=FALSE)
@@ -66,7 +64,7 @@ motifStack(pfms[sample(1:length(pfms), 20)], layout="phylog", clabel.leaves=.8,
 ### Supplementary Figure 2D
 If you want to show even more motifs in one figure, you would want to try radialPhylog layout.
 
-```{r radialPhylogLayout, fig.width=10, fig.height=10, dpi=72, fig.cap=fn("radialPhylog layout of motifStack")}
+```{r radialPhylogLayout, fig.width=10, fig.height=10, dpi=72, fig.cap=fn("radialPhylog layout of motifStack", "D")}
 ##using Pearson Correleation Coefficient as Column comparison metric and Ungapped Smith-Waterman
 motifStack(pfms, layout="radialPhylog")
 ```
@@ -81,7 +79,7 @@ To summarize motifs with signatures, the distances of the motifs should be calcu
 
 ### Supplementary Figure 2E
 
-```{r merging, fig.width=4, fig.height=4, fig.cap=fn("merging by different distance")}
+```{r merging, fig.width=4, fig.height=4, fig.cap=fn("merging by different distance", "E")}
 outpath <- "output"
 matalign_path <- "./app/matalign-v4a"
 neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
@@ -128,7 +126,7 @@ Once the signatures were generated, motifStack can show the signatures with mult
 The signature cloud provides a concise visual summary of the sequence logos, which is helpful for evolution analysis and interpretation. However, the signature cloud loses the source motif names and their distance information. 
 
 ### Supplementary Figure 2F
-```{r motifCloud, warning=FALSE, fig.width=4, fig.height=4, dpi=72, fig.cap=fn('motifCloud')}
+```{r motifCloud, warning=FALSE, fig.width=3.5, fig.height=3.5, dpi=72, fig.cap=fn('motifCloud', "F")}
 ## get signature
 gpDist <- c(.5, 1)
 motifSig <- lapply(gpDist, motifSignature, 
@@ -139,18 +137,20 @@ motifSig <- lapply(gpDist, motifSignature,
 for(i in 1:2){
     motifCloud(motifSig[[i]], layout="cloud", scale=c(9, .75))
     op <- par(mar = c(0, 0, 0, 0))
-    text(.5, .95, label=paste("group distance =", gpDist[i]))
+    text(.5, .985, label=paste("group distance =", gpDist[i]))
     par(op)
 }
 ```
 
 
 ### Supplementary Figure 2G
-```{r motifCloudRect, warning=FALSE, fig.width=4, fig.height=4, fig.cap=fn('motifCloud')}
+```{r motifCloudRect, warning=FALSE, fig.width=3.5, fig.height=3.5, fig.cap=fn('motifCloud', "G")}
 ## motif cloud, rectangle style
 for(i in 1:2){
     motifCloud(motifSig[[i]], layout="rectangles", ic.scale=FALSE)
-    message(paste("group distance =", gpDist[i]))
+    op <- par(mar = c(0, 0, 0, 0))
+    text(.5, .985, label=paste("group distance =", gpDist[i]))
+    par(op)
 }
 ```
 
@@ -219,7 +219,7 @@ pfms<-lapply(pcms,pcm2pfm)
 ```
 
 ### Supplementary Figure 2H
-```{r colorsets1, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, tree background")}
+```{r colorsets1, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, tree background", "H")}
 motIVout <- getMotIVOut(pfms, "PCC", "SWU")
 attach(motIVout)
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
@@ -234,7 +234,7 @@ text(0, 2.4, "fill color for tree background by col.bg", cex=1.5)
 ```
 
 ### Supplementary Figure 2I
-```{r colorsets2, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, leaves")}
+```{r colorsets2, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, leaves", "I")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
                             col.leaves=algorithm,
@@ -247,7 +247,7 @@ text(0, 2.4, "fill color for motif names by col.leaves", cex=1.5)
 ```
 
 ### Supplementary Figure 2J
-```{r colorsets3, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, leave background")}
+```{r colorsets3, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, leave background", "J")}
 icgp <- ifelse(sapply(sapply(unaligned.pfms, getIC), mean) > 0.6, 
                "lightgray", "black")
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
@@ -266,7 +266,7 @@ text(0, 2.4,
 ```
 
 ### Supplementary Figure 2K
-```{r colorsets4, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, inner circle")}
+```{r colorsets4, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, inner circle", "K")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
                             col.inner.label.circle=motifGroup,
@@ -285,7 +285,7 @@ text(0, 2.4,
 ```
 
 ### Supplementary Figure 2L
-```{r colorsets5, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, outer circle")}
+```{r colorsets5, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, outer circle", "L")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
                             col.outer.label.circle=motifGroup,
@@ -304,7 +304,7 @@ text(0, 2.4,
 ```
 
 ### Supplementary Figure 2M
-```{r colorsets6, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, combination")}
+```{r colorsets6, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, combination", "M")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=aligned.pfms,
                                labels.leaves=leaveNames, 
                                col.bg=algorithm, col.bg.alpha=.3,
@@ -333,7 +333,7 @@ Because the MotIV is a package in Bioconductor, it is very easy to draw motif st
 We can also try different parameters but not default setting of MotIV. Here we try to set column comparison metrics as "PCC" or "ALLR" and alignment method as Needleman-Wunsch or Ungapped Smith-Waterman.
 
 ### Supplementary Figure 2N
-```{r MotIV, fig.width=4, fig.height=4, fig.cap=fn("MotIV with different parameter")}
+```{r MotIV, fig.width=4, fig.height=4, fig.cap=fn("MotIV with different parameter", "N")}
 ##using PCC as Column comparison metric and Ungapped Smith-Waterman as alignment method
 ##using PCC as Column comparison metric and Needleman-Wunsch as alignment method
 ##using ALLR as Column comparison metric and Ungapped Smith-Waterman as alignment method
@@ -378,7 +378,7 @@ The number (1:xx; 2:yy; 3:zz) in the bottom of the figure above and this figure 
 Although this requires that phylip and matalign-v4a be installed, its performance is great in separating very close motifs such as homeodomain motifs. This document using homeodomain as example dataset, so all the analysis are done by MatAlign. 
 
 ### Supplementary Figure 2O
-```{r MatAlign, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("UPGMA tree by matAlign+PHYLIP")}
+```{r MatAlign, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("UPGMA tree by matAlign+PHYLIP", "O")}
 ##read newick tree. Alignment is done by MatAlign (see http://stormo.wustl.edu/MatAlign/)
 ##and the newick tree is generated by Neighbor, which is a part of phylip (see
 ##http://evolution.genetics.washington.edu/phylip/progs.data.dist.html)
@@ -448,7 +448,7 @@ text(0, -2.3, label=paste(names(cnt.1), cnt.1, sep=":", collapse="; "), cex=1.5)
 
 ## Supplementary Figure 2P. different distance resolution with different alignment methods
 
-```{r revolution, fig.width=12, fig.height=12, dpi=72}
+```{r revolution.1, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("difference in distance for different alignment methods--motIV", "P.a")}
 pcmpath <- "pcmsDatasetDM"
 pcms <- readPCM(pcmpath)
 pfms<-lapply(pcms,pcm2pfm)
@@ -462,7 +462,8 @@ plotMotifStackWithRadialPhylog(phylog=motIVout$phylog,
                                angle=358, 
                                plotIndex=FALSE)
 text(0, 2.4, label="motIV: cc=ALLR; align=SWU", cex=1.5)
-
+```
+```{r revolution.2, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("difference in distance for different alignment methods--MatAlign", "P.b")}
 ## function to read example data
 getMatAlignOut <- function(pcmpath, outpath="output", 
                           groupDistance=NA, trim=0.2){
