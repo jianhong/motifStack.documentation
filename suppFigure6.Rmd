@@ -1,6 +1,6 @@
 ---
-title: "Supplementary Figure 6"
-output:
+title: "Supplementary Figure 6. Motif Clusters for Members of the Homeobox or HOX Gene and Mammalian Orthologs of the Fly Caudal TF CDX1 and CDX2 "
+output: 
   pdf_document:
     fig_caption: yes
     toc: no
@@ -11,31 +11,37 @@ output:
     self_contained: no
     toc: no
 ---
-
-
-```{r loadLib, message=FALSE, warning=FALSE, error=FALSE}
+```{r setup, include=FALSE, echo=FALSE}
+library(knitr)
+opts_knit$set(progress=FALSE, verbose=FALSE, keep_md=TRUE)
+opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!htb")
+```
+```{r loadLib, message=FALSE, warning=FALSE, error=FALSE,echo=FALSE}
 ##load the library
 library(motifStack)
-
-colorSet <- c("Dm"="#00FC00", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
-              "Mm"="brown", "MmDREAM"="blue", "Ms"="#F69156", 
-              "Hs"="#D900D9")
-
-## function to read example data
-readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2){
+```
+```{r dataInput, echo=FALSE}
+getMatAlignOut <- function(pcmpath, outpath="output", 
+                          groupDistance=NA, trim=0.2){
     pcms <- readPCM(pcmpath)
     pfms<-lapply(pcms,pcm2pfm)
     matalign_path <- "./app/matalign-v4a"
     neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
-    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, "--out", outpath,
-             "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
-    newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
+    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, 
+                 "--out", outpath,
+                 "--matalign", matalign_path, 
+                 "--neighbor", neighbor_path, 
+                 "--tree","UPGMA"))
+    newickstrUPGMA <- 
+        readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
     phylog <- newick2phylog(newickstrUPGMA, FALSE)
     leaves <- names(phylog$leaves)
     motifs <- pfms[leaves]
     if(!is.na(groupDistance)){
-        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance, 
-                                   min.freq=1, trim=trim)
+        motifSig <- 
+            motifSignature(motifs, phylog, 
+                           groupDistance=groupDistance, 
+                           min.freq=1, trim=trim)
         sig <- signatures(motifSig)
         gpCol <- sigColor(motifSig)
     }else{
@@ -45,24 +51,47 @@ readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2
     }
     
     return(list(phylog=phylog, sig=sig, gpCol=gpCol, 
-                motifs=DNAmotifAlignment(motifs, minimalConsensus=3), 
-                leaves=leaves, unaligned.pfms=motifs))
+                motifs=DNAmotifAlignment(motifs), 
+                leaves=leaves, 
+                unaligned.pfms=motifs))
 }
 
+pcmpath <- dir("pcmsUni", include.dirs=TRUE)[12]
+matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
+                      getMatAlignOut, groupDistance=4)
+colorSet <- c("Dm"="#00FC00", 
+              "Mm"="brown", "Ms"="#F69156", 
+              "Hs"="#D900D9")
+
 ```
 
-```{r samples, fig.width=6, fig.height=3, dpi=150, fig.cap="__Supplementary Figure 6__: Examples of specific motifs for _Drosophila_ or human/mouse"}
-gpDis <- 2.5
-samples <- readDataDoAna("pcmsDatasetSamples", groupDistance=gpDis)
-
-attach(samples)
-leaveCols <- colorSet[gsub("^(Dm|Mm|Hs)_.*$", "\\1", leaves)]
-leaves <- gsub("Dm_cluster", "cluster", leaves)
-motifPiles(phylog=phylog, motifs, sig, groupDistance = gpDis, 
-           col.pfms2 = gpCol, col.pfms2.width = 0.02, 
-           labels.leaves=leaves, col.leaves=leaveCols, col.tree=leaveCols,
-           plotIndex=c(FALSE, TRUE), IndexCex=1.5, clabel.leaves=1.5)
-
-detach(samples)
+```{r expand, echo=FALSE}
+## kexpand is function to extend knitr.
+kexpand<-function(.ele, id, cap, figheight, des){
+    text <- paste("{{des}}\n\n```{r {{cap}},fig.cap='{{cap}}',fig.height={{figheight}},echo=",
+                  ifelse(id==1,"TRUE","FALSE"),
+                  "}\n\n
+leaveNames <- gsub('^(Dm|Mm|Ms|Hs)_', '', .ele$leaves)\n\n
+species <- colorSet[gsub(\"^(Dm|Mm|Ms|Hs).*$\", \"\\\\1\", .ele$leaves)]\n\n
+motifPiles(phylog=.ele$phylog, .ele$motifs, 
+           .ele$sig, 
+           col.tree=species, col.leaves=species, 
+           col.pfms2=.ele$gpCol, 
+           col.pfms2.width=.01, labels.leaves=leaveNames, 
+           plotIndex=c(FALSE,TRUE), IndexCex=1.5, 
+           groupDistance=4, clabel.leaves=3)\n\n
+```\n\n", sep="")
+    cat(knit(text=knit_expand(text=text)))
+}
 ```
 
+```{r plots, results='asis', echo=FALSE}
+sta <- mapply(function(.ele, name, ID, des){
+    TF.name <- gsub("Platform", "", gsub("Cluster", "", name))
+    #kexpand(.ele, id=ID, cap=paste0("Supplementary Figure 6.", TF.name),
+    #  figheight=ceiling(.25*length(.ele$leaves)), des)
+    kexpand(.ele, id="", cap="",
+        figheight=ceiling(.25*length(.ele$leaves)), "")    
+}, matAlignOut, pcmpath, 1:length(pcmpath), "")
+
+```

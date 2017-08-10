@@ -1,260 +1,95 @@
 ---
-title: "Supplementary Figure 5"
+title: "Supplementary Figure 5. Examples of the absence of a fly TF in a dimeric cluster"
 output: 
   pdf_document:
     fig_caption: yes
-    toc: yes
+    toc: no
+    includes:
+      in_header: header.tex
   html_document:
     fig_caption: yes
     self_contained: no
-    toc: yes
+    toc: no
 ---
-
-```{r loadLib, message=FALSE, warning=FALSE, error=FALSE}
+```{r setup, include=FALSE, echo=FALSE}
+library(knitr)
+opts_knit$set(progress=FALSE, verbose=FALSE, keep_md=TRUE)
+opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!htb")
+```
+```{r loadLib, message=FALSE, warning=FALSE, error=FALSE, echo=FALSE}
 ##load the library
 library(motifStack)
 ```
-## data import and get the unique motifs in mammals or fruit fly
-We use getRankedUniqueMotifs function to calculate the unique motifs only existing 
-in mammals or fruit fly. Here both matAlign and MotIV are used for motif alignment,
-because the shortages of each alignment method could be compensated by different 
-alignment methods.
-```{r getUniqMotifs}
-getmatAlignOut <- function(pfms, pcmpath, outpath="output"){
-    matAlign_path <- "./app/matAlign-v4a"
+```{r dataInput, echo=FALSE}
+getMatAlignOut <- function(pcmpath, outpath="output", 
+                          groupDistance=NA, trim=0.2){
+    pcms <- readPCM(pcmpath)
+    pfms<-lapply(pcms,pcm2pfm)
+    matalign_path <- "./app/matalign-v4a"
     neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
-    system(paste("perl matAlign2tree.pl --in . --pcmpath", pcmpath, 
+    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, 
                  "--out", outpath,
-                 "--matAlign", matAlign_path, 
+                 "--matalign", matalign_path, 
                  "--neighbor", neighbor_path, 
                  "--tree","UPGMA"))
     newickstrUPGMA <- 
-        readLines(con=file.path(outpath, "NJ.matAlign.distMX.nwk"))
+        readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
     phylog <- newick2phylog(newickstrUPGMA, FALSE)
     leaves <- names(phylog$leaves)
     motifs <- pfms[leaves]
-    return(list(phylog=phylog, 
-                motifs=DNAmotifAlignment(motifs), 
-                leaves=leaves, 
-                unaligned.pfms=motifs))
-}
-
-getMotIVOut <- function(pfms, cc, align){
-    pfmList2matrixList <- function(pfms){
-        m <- lapply(pfms, function(.ele) as(.ele, "matrix"))
-        names(m) <- unlist(lapply(pfms, function(.ele) .ele$name))
-        m
+    if(!is.na(groupDistance)){
+        motifSig <- 
+            motifSignature(motifs, phylog, 
+                           groupDistance=groupDistance, 
+                           min.freq=1, trim=trim)
+        sig <- signatures(motifSig)
+        gpCol <- sigColor(motifSig)
+    }else{
+        motifSig <- NA
+        sig <- NA
+        gpCol <- NA
     }
-    jaspar.scores <- 
-        MotIV::readDBScores(
-            file.path(".", "app", "scores", 
-                      paste("JaspRand_", cc, "_", align, ".scores", sep="")))
-    d <- MotIV::motifDistances(pfmList2matrixList(pfms), 
-                               cc=cc, align=align)
-    hc <- MotIV::motifHclust(d)
-    phylog <- hclust2phylog(hc)
-    leaves <- names(phylog$leaves)
-    motifs <- pfms[hc$order]
-    return(list(phylog=phylog, 
+    
+    return(list(phylog=phylog, sig=sig, gpCol=gpCol, 
                 motifs=DNAmotifAlignment(motifs), 
                 leaves=leaves, 
                 unaligned.pfms=motifs))
 }
 
+pcmpath <- dir("pcmsUni", include.dirs=TRUE)[1:7]
+matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
+                      getMatAlignOut, groupDistance=4)
+description <- c("## Dimeric motifs are separated from monomeric motifs from the same TF\n\nFor most dimeric clusters, one or more monomeric motifs cluster with a Drosophilar motif, suggesting that the absence of a fly TF in a dimeric cluster may be a methological difference rather than a biological one", "", "", "", "", "", "")
 colorSet <- c("Dm"="#00FC00", 
               "Mm"="brown", "Ms"="#F69156", 
               "Hs"="#D900D9")
-
-pcmpath <- "pcmsDatasetALL"
-pcms <- readPCM(pcmpath)
-pfms<-lapply(pcms,pcm2pfm)
-
-matAlignOut <- getmatAlignOut(pfms, pcmpath)
-species <- factor(gsub("^(Dm|Mm|Ms|Hs).*$", "\\1", matAlignOut$leaves))
-leaveNames.matAlign <- gsub("^(Dm|Mm|Ms|Hs)_", "", matAlignOut$leaves)
-species.col.matAlign <- species
-levels(species.col.matAlign) <- colorSet[levels(species)]
-species.col.matAlign <- as.character(species.col.matAlign)
-species.matAlign <- species.col.matAlign
-species.matAlign[species.matAlign %in% colorSet[c("Mm", "Ms", "Hs")]] <- "m" #mammalian
-species.matAlign[species.matAlign==colorSet["Dm"]] <- "d" #fly
-matAlignL <- getRankedUniqueMotifs(matAlignOut$phylog, species.matAlign)
-
-motIVOut <- getMotIVOut(pfms, "ALLR", "SWU")
-species <- factor(gsub("^(Dm|Mm|Ms|Hs).*$", "\\1", motIVOut$leaves))
-leaveNames.motIV <- gsub("^(Dm|Mm|Ms|Hs)_", "", motIVOut$leaves)
-species.col.motIV <- species
-levels(species.col.motIV) <- colorSet[levels(species)]
-species.col.motIV <- as.character(species.col.motIV)
-species.motIV <- species.col.motIV
-species.motIV[species.motIV %in% colorSet[c("Mm", "Ms", "Hs")]] <- "m"
-species.motIV[species.motIV==colorSet["Dm"]] <- "d"
-motIVoutL <- getRankedUniqueMotifs(motIVOut$phylog, species.motIV)
 ```
 
-We select close number counts of unique motifs by both methods.
-```{r selectCutoff, fig.width=8, fig.height=6, dpi=72}
-plot(matAlignL$uni.length, pch=16, cex=.5, main="matAlign")
-abline(h = 170, lty=2, col="blue")
-
-uni.length <- motIVoutL$uni.length
-uni.length[, 1] <- log2(uni.length[, 1])
-plot(uni.length, pch=16, cex=.5, main="motIV", xlab="log2 transformed distance")
-abline(h = 170, lty=2, col="blue")
-```
-
-Here we merged the results from different alignment methods.
-```{r rank}
-prettyNum(matAlignL$uni.length[matAlignL$uni.length[,"uniqueMotifCount"]==170,])
-prettyNum(motIVoutL$uni.length[abs(
-    motIVoutL$uni.length[,"uniqueMotifCount"]-170)<2,])
-matAlignSig <- motifSignature(matAlignOut$unaligned.pfms,
-                              matAlignOut$phylog, 
-                              groupDistance=4, min.freq=1)
-motIVSig <- motifSignature(motIVOut$unaligned.pfms,
-                           motIVOut$phylog, 
-                           groupDistance=0.005, min.freq=1)
-library(reshape2)
-matAlign.sig4 <- 
-    melt(lapply(signatures(matAlignSig),
-                function(.ele){unlist(strsplit(.ele$name, ";"))}))
-motIV.sig.005 <- 
-    melt(lapply(signatures(motIVSig), 
-                function(.ele){unlist(strsplit(.ele$name, ";"))}))
-
-rank.name <- union(names(matAlignL$uni.rank), names(motIVoutL$uni.rank))
-rank <- cbind(matAlignL$uni.rank[rank.name], 
-              motIVoutL$uni.rank[rank.name])
-rownames(rank) <- rank.name
-colnames(rank) <- c("matAlign.rank", "motIV.rank")
-rank <- rank[order(rowSums(rank)),]
-rank <- cbind(rank, "rank"=1:nrow(rank))
-rank <- cbind(rank, 
-              matAlign.Sig.gpDis.4=
-                  matAlign.sig4[match(rownames(rank), 
-                                          matAlign.sig4[,1]), 2], 
-              motIV.Sig.gpDis.0.005=
-                  motIV.sig.005[match(rownames(rank), 
-                                          motIV.sig.005[,1]), 2])
-rank <- as.data.frame(rank)
-rank <- 
-    cbind(rank,
-          motifNameInFigure=gsub("_", " ", gsub("^.._", "", rownames(rank))))
-head(rank)
-```
-## motif piles
-Here is the output of all the motifs by matAlign.
-```{r motifPiles.matAlign, fig.width=12, fig.height=48, dpi=72}
-motifPiles(phylog=matAlignOut$phylog, matAlignOut$motifs, 
-           signatures(matAlignSig), 
-           col.tree=species.col.matAlign, col.leaves=species.col.matAlign, 
-           col.pfms2=sigColor(matAlignSig), 
-           col.pfms2.width=.01, labels.leaves=leaveNames.matAlign, 
-           plotIndex=c(F,TRUE), IndexCex=1, 
-           groupDistance=4, clabel.leaves=.6)
-legend("topleft", 
-       legend=c("Dm/FFS/B1H", 
-                "Mm/Uniprobe/PBM/Seed-And-Wobble", 
-                "Mm/CIS-BP/SELEX/DREAM5",
-                "Hs/CIS-BP/SELEX/DREAM5"), 
-       fill= colorSet[c("Dm", "Mm", "Ms", "Hs")], 
-       border="white", lty=NULL, bty = "n")
-```
-
-
-Here is the output of all the motifs by motIV.
-```{r motifPiles.motIV, fig.width=12, fig.height=48, dpi=72}
-motifPiles(phylog=motIVOut$phylog, motIVOut$motifs, 
-           signatures(motIVSig), 
-           col.tree=species.col.motIV, col.leaves=species.col.motIV, 
-           col.pfms2=sigColor(motIVSig), 
-           col.pfms2.width=.01, labels.leaves=leaveNames.motIV, 
-           plotIndex=c(F,TRUE), IndexCex=1, 
-           groupDistance=0.005, clabel.leaves=.6)
-```
-
-
-Here is the output of unique motifs aligned by matAlign.
-```{r motifPiles.matAlign.uni, fig.width=12, fig.height=24, dpi=72}
-uni <- intersect(
-    matAlignL$uni.list[[paste("dist_", 
-                              matAlignL$uni.length[
-                                  matAlignL$uni.length[, "uniqueMotifCount"]==170, 1], 
-                              sep="")]],
-    motIVoutL$uni.list[[paste("dist_", 
-                              motIVoutL$uni.length[abs(
-                                  motIVoutL$uni.length[,"uniqueMotifCount"]-170)<2, 1], 
-                              sep="")]])
-uniPath <- "pcmsDatasetUni_matAlign.4_motIV.005"
-dir.create(uniPath, showWarnings=FALSE)
-sta <- file.copy(file.path(pcmpath, paste(uni, "pcm", sep=".")), 
-                 file.path(uniPath, paste(uni, "pcm", sep=".")))
-uni.pcms <- readPCM(uniPath)
-uni.pfms<-lapply(uni.pcms,pcm2pfm)
-gpDis <- 4
-uni.matAlign <- getmatAlignOut(uni.pfms, uniPath)
-uni.matAlignSig <- motifSignature(uni.matAlign$unaligned.pfms,
-                                  uni.matAlign$phylog,
-                                  groupDistance=gpDis, min.freq=1)
-species <- factor(gsub("^(Dm|Mm|Ms|Hs).*$", "\\1", uni.matAlign$leaves))
-levels(species) <- colorSet[c("Dm", "Hs", "Mm", "Ms")]
-species <- as.character(species)
-leaveNames <- gsub("^(Dm|Mm|Ms|Hs)_", "", uni.matAlign$leaves)
-motifPiles(uni.matAlign$phylog, 
-           uni.matAlign$motifs, 
-           signatures(uni.matAlignSig), 
+```{r expand, echo=FALSE}
+## kexpand is function to extend knitr.
+kexpand<-function(.ele, id, cap, figheight, des){
+    text <- paste("{{des}}\n\n```{r {{cap}},fig.cap='{{cap}}',fig.height={{figheight}},echo=",
+                  ifelse(id==1,"TRUE","FALSE"),
+                  "}\n\n
+leaveNames <- gsub('^(Dm|Mm|Ms|Hs)_', '', .ele$leaves)\n\n
+species <- colorSet[gsub(\"^(Dm|Mm|Ms|Hs).*$\", \"\\\\1\", .ele$leaves)]\n\n
+motifPiles(phylog=.ele$phylog, .ele$motifs, 
+           .ele$sig, 
            col.tree=species, col.leaves=species, 
-           col.pfms2=sigColor(uni.matAlignSig), 
-           col.pfms2.width=.01, 
-           labels.leaves=leaveNames, 
-           plotIndex=c(F,TRUE), IndexCex=1, 
-           groupDistance=gpDis, clabel.leaves=1)
+           col.pfms2=.ele$gpCol, 
+           col.pfms2.width=.01, labels.leaves=leaveNames, 
+           plotIndex=c(FALSE,TRUE), IndexCex=1.5, 
+           groupDistance=4, clabel.leaves=3)\n\n
+```\n\n", sep="")
+    cat(knit(text=knit_expand(text=text)))
+}
 ```
 
+```{r plots, results='asis'}
+sta <- mapply(function(.ele, name, ID, des){
+    TF.name <- gsub("DimerCluster", "", name)
+    kexpand(.ele, id=ID, cap=paste0("Supplementary Figure 5.", TF.name),
+            figheight=ceiling(.25*length(.ele$leaves)), des)
+}, matAlignOut, pcmpath, 1:length(pcmpath), description)
 
-Here is the output of unique motifs aligned by motIV.
-```{r motifPiles.matOut.uni, fig.width=12, fig.height=24, dpi=72}
-cc <- "ALLR"
-align <- "SWU"
-gpDis <- 0.005
-uni.motIV <- getMotIVOut(uni.pfms, cc, align)
-uni.motIVSig <- motifSignature(uni.motIV$unaligned.pfms,
-                               uni.motIV$phylog,
-                               groupDistance=gpDis, min.freq=1)
-species <- factor(gsub("^(Dm|Mm|Ms|Hs).*$", "\\1", uni.motIV$leaves))
-levels(species) <- colorSet[c("Dm", "Hs", "Mm", "Ms")]
-species <- as.character(species)
-leaveNames <- gsub("^(Dm|Mm|Ms|Hs)_", "", uni.motIV$leaves)
-motifPiles(uni.motIV$phylog, 
-           uni.motIV$motifs, 
-           signatures(uni.motIVSig), 
-           col.tree=species, col.leaves=species, 
-           col.pfms2=sigColor(uni.motIVSig), 
-           col.pfms2.width=.01, 
-           labels.leaves=leaveNames, 
-           plotIndex=c(F,TRUE), IndexCex=1, 
-           groupDistance=gpDis, clabel.leaves=1)
-```
-
-
-## rank list
-```{r showrank}
-uni.matAlign.sig4 <- 
-    melt(lapply(signatures(uni.matAlignSig), 
-                function(.ele){unlist(strsplit(.ele$name, ";"))}))
-uni.motIV.sig.005 <- 
-    melt(lapply(signatures(uni.motIVSig), 
-                function(.ele){unlist(strsplit(.ele$name, ";"))}))
-rank <- cbind(rank, 
-              uni.matAlign.Sig.gpDis.4=
-                  uni.matAlign.sig4[match(rownames(rank), 
-                                          uni.matAlign.sig4[,1]), 2], 
-              uni.motIV.Sig.gpDis.0.005=
-                  uni.motIV.sig.005[match(rownames(rank), 
-                                          uni.motIV.sig.005[,1]), 2])
-rank
-```
-## sessionInfo
-```{r sessionInfo}
-sessionInfo()
 ```
