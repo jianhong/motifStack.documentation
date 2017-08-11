@@ -32,50 +32,52 @@ pcms <- readPCM(pcmpath)
 pfms<-lapply(pcms,pcm2pfm)
 ```
 
-## Supplementary Figure 2A-D. Examples of linear and radial dendrograms and commands to generate Them
+## Supplementary Figure 2A-D. Examples of linear and radial dendrograms and commands to generate them
 
-### Supplementary Figure 2A
+### Plot motifs as a stack
 ```{r stackLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("plotted as a stack of motifs", "A")}
 subset_pfms <- pfms[10:15]
 motifStack(subset_pfms, layout="stack")
 ```
 
-### Supplementary Figure 2B
+###Plot motifs as a linear tree 
 
-```{r treeLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("plotted as a linear tree", "B")}
-##By default, MotIV is used for clustering
-motifStack(subset_pfms, layout="tree", trueDist=TRUE)
-```
-
-### Supplementary Figure 2C
-
-```{r phylogLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("plotted as a linear phylogenic tree", "C")}
+```{r phylogLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("plotted as a linear tree", "B")}
 ##try different style of sequence logo
 motifStack(pfms[sample(1:length(pfms), 20)], layout="phylog", clabel.leaves=.8,
            f.logo=0.6, ic.scale=FALSE)
 ```
 
-### Supplementary Figure 2D
 
-```{r radialPhylogLayout, fig.width=10, fig.height=10, dpi=72, fig.cap=fn("plotted as a radial phylogenic tree", "D")}
-##using Pearson Correleation Coefficient as Column comparison metric and Smith-Waterman Ungapped
+###Plot motifs as a linear tree with information content (IC)
+
+```{r treeLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("plotted as a linear tree with IC", "C")}
+##By default, MotIV is used for clustering
+motifStack(subset_pfms, layout="tree", trueDist=TRUE)
+```
+
+
+### Plot  motifs as a radial phylogenetic tree
+
+```{r radialPhylogLayout, fig.width=10, fig.height=10, dpi=72, fig.cap=fn("plotted as a radial phylogenetic tree", "D")}
 motifStack(pfms, layout="radialPhylog")
 ```
 
-## Supplementary Figure 2E-G. Merge motifs using motifSignature function with different distance cutoffs, and plot merged motifs in various layouts
+## Supplementary Figure 2E-G. Merge motifs using the *motifSignature* function with different distance cutoffs, and plot merged motifs in various layouts
 
-Before motifs being merged, the distances of the motifs need to be calculated using STAMP, MovIV or MatAlign. Here we show how different distance cutoffs affect the merging results. The red dotted line indicates the distance cutoff used.
+Before motifs being merged, the distances of the motifs need to be calculated using STAMP, MovIV or MatAlign. Here we show different ways to draw the merged motifs and how different distance cutoffs affect the merging results. The red dotted line indicates the distance cutoff used.
 
-### Supplementary Figure 2E
+### Merge motifs using different distance cutoffs
 
 ```{r merging, fig.width=4, fig.height=4, fig.cap=fn("merging by different distance", "E")}
-outpath <- "output"
-matalign_path <- "./app/matalign-v4a"
-neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
+source("zzz.R") ## set outpath, matalign_path, neighbor_pah and MatAlign2tree_path
+# outpath <- "output"
+# matalign_path <- "./app/matalign-v4a"
+# neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
 pcmpath <- "pcmsDatasetDM"
 pcms <- readPCM(pcmpath)
 pfms<-lapply(pcms,pcm2pfm)
-system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, 
+system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, 
              "--out", outpath,
              "--matalign", matalign_path, 
              "--neighbor", neighbor_path, 
@@ -109,7 +111,7 @@ for(groupDistance in c(0, 1, 2, 3)){
 ```
 
 
-### Supplementary Figure 2F
+### Plot merged motif as a radial phylogenetic tree
 ```{r motifCloud, warning=FALSE, fig.width=3.5, fig.height=3.5, dpi=72, fig.cap=fn('motifCloud', "F")}
 ## get signature
 gpDist <- c(.5, 1)
@@ -126,10 +128,10 @@ for(i in 1:2){
 }
 ```
 
-### Supplementary Figure 2G
+###Plot merged motif as a word cloud
 ```{r motifCloudRect, warning=FALSE, fig.width=3.5, fig.height=3.5, fig.cap=fn('motifCloud', "G")}
 ## motif cloud, rectangle style
-for(i in 2:2){
+for(i in 1:2){
     motifCloud(motifSig[[i]], layout="rectangles", ic.scale=FALSE)
     op <- par(mar = c(0, 0, 0, 0))
     text(.5, .985, label=paste("group distance =", gpDist[i]))
@@ -139,10 +141,9 @@ for(i in 2:2){
 
 ## Supplementary Figure 2H-M. Use various color options to visualize different sources of variations in the motif set
 
-There are four ways to color a radial phylogenic tree, i.e., the background of the inner circle, the motif names, the inner label ring and the outer label ring. Here are a few examples on how to use these options to show the data source of the motif, the computational algorithm for generating the motifs, information content (IC) and the motif group. 
+There are four ways to color a radial phylogenetic tree, i.e., the background of the inner circle, the motif names, the inner label ring and the outer label ring. Here are a few examples on how to use these options to show the data source of the motif, the computational algorithm for generating the motifs, information content (IC) and the motif group. 
 
 ```{r functions}
-##color sets
 getPairColor <- function(n=10L){
     if(n %% 2 != 0) n <- n+1
     n <- n/2
@@ -200,7 +201,7 @@ pcms <- readPCM(pcmpath)
 pfms<-lapply(pcms,pcm2pfm)
 ```
 
-### Supplementary Figure 2H
+###Use the color of the background of inner circle to distinguish different data sources with the parameter col.bg
 ```{r colorsets1, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, tree background", "H")}
 motIVout <- getMotIVOut(pfms, "PCC", "SWU")
 attach(motIVout)
@@ -215,7 +216,7 @@ legend(-2.3, 2.4, legend=c("Uniprobe", "CIS-BP"),
 text(0, 2.4, "Use the color of the background of inner circle to distinguish different data sources with the parameter col.bg", cex=1.5)
 ```
 
-### Supplementary Figure 2I
+###Use the color of motif names to distinguish the computational algorithms used with the parameter col.leaves
 ```{r colorsets2, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, leaves", "I")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
@@ -228,7 +229,7 @@ legend(-2.3, 2.4, legend=c("DREAM5", "Seed-And-Wobble", "BEEML"),
 text(0, 2.4, "Use the color of motif names to separate the computational algorithms used with the parameter col.leaves", cex=1.5)
 ```
 
-### Supplementary Figure 2J
+###Use the color of the background of the motif names to distinguish motifs with high and low IC with the parameter col.leaves.bg
 ```{r colorsets3, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, leave background", "J")}
 icgp <- ifelse(sapply(sapply(unaligned.pfms, getIC), mean) > 0.6, 
                "lightgray", "black")
@@ -247,7 +248,7 @@ text(0, 2.4,
      cex=1.5)
 ```
 
-### Supplementary Figure 2K
+###Use the color of the inner ring of the motif circle to distinguish motif groups with the parameter col.inner.label.circle
 ```{r colorsets4, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, inner circle", "K")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
@@ -266,7 +267,7 @@ text(0, 2.4,
      cex=1.5)
 ```
 
-### Supplementary Figure 2L
+###Use the color of the outer ring of the motif circle to distinguish motif groups with the parameter col.outer.label.circle
 ```{r colorsets5, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, outer circle", "L")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
@@ -285,7 +286,7 @@ text(0, 2.4,
      cex=1.5)
 ```
 
-### Supplementary Figure 2M
+###Use a combination of coloring options to visualize different source of variations
 ```{r colorsets6, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("color setting, use a combination of coloring options", "M")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=aligned.pfms,
                                labels.leaves=leaveNames, 
@@ -315,7 +316,7 @@ Average Log Likelihood Ratio (ALLR) is used as the CCM, and Smith-Waterman Ungap
 
 To run the MatAlign examples, phylip (http://evolution.genetics.washington.edu/phylip/progs.data.dist.html) and MatAlign (http://stormo.wustl.edu/MatAlign/) need to be installed first.
 
-### Supplementary Figure 2N
+###Visualize motif alignments using MotIV with different CCM and alignment methods
 ```{r MotIV, fig.width=4, fig.height=4, fig.cap=fn("MotIV with different CCM and alignment methods", "N")}
 
 sta <- mapply(function(cc, align){
@@ -350,23 +351,21 @@ sta <- mapply(function(cc, align){
 
 The number (1:xx; 2:yy; 3:zz) on the bottom of the figure 2O and 2P represents the number of motifs identified by different number of motif comparison and clustering algorithms. 1:xx means that xx number of motifs are identified by one algorithm; 2:yy means that yy number of motifs are identified by two different algorithms; 3:zz means that zz number of motifs are identified by three different algorithms.
 
-### Supplementary Figure 2O
+###Visualize motif alignments using MatAlign with ALLR as the MCC and SWU as the alignment method
 ```{r MatAlign, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("UPGMA tree by matAlign+PHYLIP", "O")}
 ##read newick tree. Alignment is done by MatAlign
 ##and the newick tree is generated by Neighbor, which is a part of phylip
-outpath <- "output"
-matalign_path <- "./app/matalign-v4a"
-neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
-system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, 
+source("zzz.R")
+system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, 
              "--out", outpath,
              "--matalign", matalign_path, 
              "--neighbor", neighbor_path, 
              "--tree","UPGMA"))
 newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
-##convert to phylog object
+##convert it to phylog object
 phylogUPGMAmatAlign <- newick2phylog(newickstrUPGMA, FALSE)
 
-##get the leaves of phylog to reorder the pfms
+##get the leaves of phylog for reordering the pfms
 leaveNames <- names(phylogUPGMAmatAlign$leaves)
 this_motifs <- pfms[leaveNames]
 
@@ -378,7 +377,7 @@ dataSource <- as.character(dataSource)
 algorithm <- factor((!grepl("_M", leaveNames)) + grepl("_bml", leaveNames))
 levels(algorithm) <- c("blue", "brown", "orange") ##("DREAM5", "Seed-And-Wobble", "BEEML")
 algorithm <- as.character(algorithm)
-## motifs from same PBM data
+## motifs from the same PBM data source
 motifGroup <- factor(gsub("(.*?)_.*$", "\\1", leaveNames))
 levels.motifGroup <- levels(motifGroup)
 levels(motifGroup) <- pairColor[1:length(levels(motifGroup))]
@@ -437,13 +436,11 @@ text(0, 2.4, label="motIV: cc=ALLR; align=SWU", cex=1.5)
 ```
 ```{r revolution.2, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("MatAlign (ALLR and SWU) as the alignment method", "P.b")}
 ## function to read example data
-getMatAlignOut <- function(pcmpath, outpath="output", 
-                          groupDistance=NA, trim=0.2){
+getMatAlignOut <- function(pcmpath, groupDistance=NA, trim=0.2){
     pcms <- readPCM(pcmpath)
     pfms<-lapply(pcms,pcm2pfm)
-    matalign_path <- "./app/matalign-v4a"
-    neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
-    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, 
+    source("zzz.R")
+    system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, 
                  "--out", outpath,
                  "--matalign", matalign_path, 
                  "--neighbor", neighbor_path, 

@@ -1,5 +1,5 @@
 ---
-title: "Supplementary Figure 7. Species-specific motifs in the HD family"
+title: "Supplementary Figure 7. Species-specific Motifs in the HD Family"
 output: 
   pdf_document:
     fig_caption: yes
@@ -20,28 +20,20 @@ opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!
 ##load the library
 library(motifStack)
 ```
-```{r dataInput}
-getMatAlignOut <- function(pcmpath, outpath="output", 
-                          groupDistance=NA, trim=0.2){
+```{r dataInput, echo=FALSE}
+source("zzz.R") ## set outpath, matalign_path, neighbor_pah and MatAlign2tree_path
+getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
     pfms<-lapply(pcms,pcm2pfm)
-    matalign_path <- "./app/matalign-v4a"
-    neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
-    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, 
-                 "--out", outpath,
-                 "--matalign", matalign_path, 
-                 "--neighbor", neighbor_path, 
-                 "--tree","UPGMA"))
-    newickstrUPGMA <- 
-        readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
+    system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, "--out", outpath,
+             "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
+    newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
     phylog <- newick2phylog(newickstrUPGMA, FALSE)
     leaves <- names(phylog$leaves)
     motifs <- pfms[leaves]
     if(!is.na(groupDistance)){
-        motifSig <- 
-            motifSignature(motifs, phylog, 
-                           groupDistance=groupDistance, 
-                           min.freq=1, trim=trim)
+        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance,
+                                   min.freq=1, trim=trim)
         sig <- signatures(motifSig)
         gpCol <- sigColor(motifSig)
     }else{
@@ -51,15 +43,14 @@ getMatAlignOut <- function(pcmpath, outpath="output",
     }
     
     return(list(phylog=phylog, sig=sig, gpCol=gpCol, 
-                motifs=DNAmotifAlignment(motifs), 
-                leaves=leaves, 
+                motifs=DNAmotifAlignment(motifs), leaves=leaves, 
                 unaligned.pfms=motifs))
 }
 
-pcmpath <- dir("pcmsUni", include.dirs=TRUE)[7]
+pcmpath <- dir("pcmsUni", include.dirs=TRUE)[13]
 matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
                       getMatAlignOut, groupDistance=4)
-description <- c("Species-specific motifs")
+description <- c("## Species-specific motifs")
 colorSet <- c("Dm"="#00FC00", 
               "Mm"="brown", "Ms"="#F69156", 
               "Hs"="#D900D9")
@@ -68,7 +59,7 @@ colorSet <- c("Dm"="#00FC00",
 ```{r expand, echo=FALSE}
 kexpand<-function(.ele, id, cap, figheight, des){
     text <- paste("{{des}}\n\n```{r {{cap}},fig.cap='{{cap}}',fig.height={{figheight}},echo=",
-                  ifelse(id==1,"TRUE","FALSE"),
+                  ifelse(id==100,"TRUE","FALSE"),
                   "}\n\n
 leaveNames <- gsub('^(Dm|Mm|Ms|Hs)_', '', .ele$leaves)\n\n
 species <- colorSet[gsub(\"^(Dm|Mm|Ms|Hs).*$\", \"\\\\1\", .ele$leaves)]\n\n
@@ -91,18 +82,16 @@ sta <- mapply(function(.ele, name, ID, des){
 
 ```
 
-```{r}
+```{r echo=FALSE}
 colorSet <- c("Dm"="#00FC00", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
               "Mm"="brown", "MmDREAM"="blue", "Ms"="#F69156", 
               "Hs"="#D900D9")
 
 ## function to read example data
-readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2){
+readDataDoAna <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
     pfms<-lapply(pcms,pcm2pfm)
-    matalign_path <- "./app/matalign-v4a"
-    neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
-    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, "--out", outpath,
+    system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, "--out", outpath,
              "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
     newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
     phylog <- newick2phylog(newickstrUPGMA, FALSE)

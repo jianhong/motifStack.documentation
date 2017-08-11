@@ -13,7 +13,7 @@ output:
 ---
 ```{r setup, include=FALSE, echo=FALSE}
 library(knitr)
-opts_knit$set(progress=FALSE, verbose=FALSE, keep_md=TRUE)
+opts_knit$set(progress=FALSE, verbose=FALSE, keep_md=FALSE)
 opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!htb")
 ```
 ```{r loadLib, message=FALSE, warning=FALSE, error=FALSE,echo=FALSE}
@@ -21,27 +21,19 @@ opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!
 library(motifStack)
 ```
 ```{r dataInput, echo=FALSE}
-getMatAlignOut <- function(pcmpath, outpath="output", 
-                          groupDistance=NA, trim=0.2){
+source("zzz.R") ## set outpath, matalign_path, neighbor_pah and MatAlign2tree_path
+getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
     pfms<-lapply(pcms,pcm2pfm)
-    matalign_path <- "./app/matalign-v4a"
-    neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
-    system(paste("perl MatAlign2tree.pl --in . --pcmpath", pcmpath, 
-                 "--out", outpath,
-                 "--matalign", matalign_path, 
-                 "--neighbor", neighbor_path, 
-                 "--tree","UPGMA"))
-    newickstrUPGMA <- 
-        readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
+    system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, "--out", outpath,
+             "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
+    newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
     phylog <- newick2phylog(newickstrUPGMA, FALSE)
     leaves <- names(phylog$leaves)
     motifs <- pfms[leaves]
     if(!is.na(groupDistance)){
-        motifSig <- 
-            motifSignature(motifs, phylog, 
-                           groupDistance=groupDistance, 
-                           min.freq=1, trim=trim)
+        motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance,
+                                   min.freq=1, trim=trim)
         sig <- signatures(motifSig)
         gpCol <- sigColor(motifSig)
     }else{
@@ -51,8 +43,7 @@ getMatAlignOut <- function(pcmpath, outpath="output",
     }
     
     return(list(phylog=phylog, sig=sig, gpCol=gpCol, 
-                motifs=DNAmotifAlignment(motifs), 
-                leaves=leaves, 
+                motifs=DNAmotifAlignment(motifs), leaves=leaves, 
                 unaligned.pfms=motifs))
 }
 
