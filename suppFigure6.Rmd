@@ -1,5 +1,5 @@
 ---
-title: "Supplementary Figure 6. Motif Clusters for Members of the Homeobox or HOX Gene and Mammalian Orthologs of the Fly Caudal TF CDX1 and CDX2 "
+title: "Supplementary Figure 6. Motif Clusters for HOX and Caudal Related TFs"
 output: 
   pdf_document:
     fig_caption: yes
@@ -11,6 +11,7 @@ output:
     self_contained: no
     toc: no
 ---
+
 ```{r setup, include=FALSE, echo=FALSE}
 library(knitr)
 opts_knit$set(progress=FALSE, verbose=FALSE, keep_md=FALSE)
@@ -21,7 +22,10 @@ opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!
 library(motifStack)
 ```
 ```{r dataInput, echo=FALSE}
-source("zzz.R") ## set outpath, matalign_path, neighbor_pah and MatAlign2tree_path
+outpath <- "output"
+matalign_path <- "./app/matalign-v4a"
+neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
+MatAlign2tree_path <- "./MatAlign2tree.pl"
 getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
     pfms<-lapply(pcms,pcm2pfm)
@@ -81,7 +85,7 @@ sta <- mapply(function(.ele, name, ID, des){
     TF.name <- gsub("Platform", "", gsub("Cluster", "", name))
     #kexpand(.ele, id=ID, cap=paste0("Supplementary Figure 6.", TF.name),
     #  figheight=ceiling(.25*length(.ele$leaves)), des)
-    kexpand(.ele, id="", cap="",
+    kexpand(.ele, id="", cap="__Supplemental Figure 6__. Motifs of HOX and caudal related TFs are shown in purple (human), brown and orange (mouse) and green (fly). These TFs cluster into two different motif groups, one with fly motifs and the other without fly motifs",
         figheight=ceiling(.25*length(.ele$leaves)), "")    
 }, matAlignOut, pcmpath, 1:length(pcmpath), "")
 

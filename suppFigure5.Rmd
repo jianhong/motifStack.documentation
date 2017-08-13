@@ -1,5 +1,5 @@
 ---
-title: "Supplementary Figure 5. Examples of the Aabsence of Fly TFs in Dimeric Clusters"
+title: "Supplementary Figure 5. Examples of HD TFs with Both Monomeric and Dimeric Motifs"
 output: 
   pdf_document:
     fig_caption: yes
@@ -11,6 +11,11 @@ output:
     self_contained: no
     toc: no
 ---
+
+##Motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data), orange (mouse/SELEX) and green (Fly/B1H data).
+
+##Some of the HD TFs in the SELEX dataset have both monomeric and dimeric motifs. We have aligned the dimeric motif clusters with the associated monomeric motif clusters for the same TFs. Examples of these motif clusters include the ALX1/PHOX2 cluster (Supplementary Figure 5.01), the BarH cluster (Supplementary Figure 5.02), the EMX cluster (Supplementary Figure 5.03), the En/GBX cluster (Supplementary Figure 5.04), the IRX cluster (Supplementary Figure 5.05), the MSX cluster (Supplementary Figure 5.06) and the Cphx cluster (Supplementary Figure 5.07).  Generally, members of a dimeric motif cluster have a monomeric motif that clusters with a fly HD, suggesting that the absence of a fly TF in a dimeric cluster may be a methodological difference rather than a biological one.
+
 ```{r setup, include=FALSE, echo=FALSE}
 library(knitr)
 opts_knit$set(progress=FALSE, verbose=FALSE, keep_md=TRUE)
@@ -21,7 +26,10 @@ opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!
 library(motifStack)
 ```
 ```{r dataInput, echo=FALSE}
-source("zzz.R") ## set outpath, matalign_path, neighbor_pah and MatAlign2tree_path
+outpath <- "output"
+matalign_path <- "./app/matalign-v4a"
+neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
+MatAlign2tree_path <- "./MatAlign2tree.pl"
 getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
     pfms<-lapply(pcms,pcm2pfm)
@@ -50,7 +58,7 @@ getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
 pcmpath <- dir("pcmsUni", include.dirs=TRUE)[1:7]
 matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
                       getMatAlignOut, groupDistance=4)
-description <- c("## Dimeric motifs are separated from monomeric motifs from the same TF\n\nFor most dimeric clusters, one or more monomeric motifs cluster with a Drosophilar motif, suggesting that the absence of a fly TF in a dimeric cluster may be a methological difference rather than a biological one", "", "", "", "", "", "")
+description <- ""
 colorSet <- c("Dm"="#00FC00", 
               "Mm"="brown", "Ms"="#F69156", 
               "Hs"="#D900D9")
