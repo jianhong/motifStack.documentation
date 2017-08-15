@@ -39,17 +39,17 @@ subset_pfms <- pfms[10:15]
 motifStack(subset_pfms, layout="stack")
 ```
 
-\FloatBarrier
+\clearpage
 
 ###Plot motifs as a linear tree with nucleotides drawn proportional to their frequency.
 
 ```{r phylogLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("Plotted as a linear tree with nucleotides drawn proportional to their frequency", "B")}
 ##try different style of sequence logo
 motifStack(pfms[sample(1:length(pfms), 20)], layout="phylog", clabel.leaves=.8,
-           f.logo=0.6, ic.scale=FALSE)
+           f.logo=0.5, ic.scale=FALSE)
 ```
 
-\FloatBarrier
+\clearpage
 
 ###Plot motifs as a linear tree depicting information content (IC).
 
@@ -58,7 +58,7 @@ motifStack(pfms[sample(1:length(pfms), 20)], layout="phylog", clabel.leaves=.8,
 motifStack(subset_pfms, layout="tree", trueDist=TRUE)
 ```
 
-\FloatBarrier
+\clearpage
 
 ### Plot motifs as a radial tree.
 
@@ -66,7 +66,7 @@ motifStack(subset_pfms, layout="tree", trueDist=TRUE)
 motifStack(pfms, layout="radialPhylog")
 ```
 
-\FloatBarrier
+\clearpage
 
 ## Supplementary Figure 2E-G. Merge motifs with different distance cutoffs and display these motif signatures in various layouts.
 
@@ -115,15 +115,15 @@ for(groupDistance in c(0, 1, 2, 3)){
 }
 ```
 
-```{r fig.cap=fn("Merge motifs by different distance", "E"), fig.width=0.1, fig.height=0.02, echo=FALSE}
+```{r fig.cap=fn("Motif signature plotted as a radial tree by different distance", "E"), fig.width=0.1, fig.height=0.02, echo=FALSE}
 par(mar=rep(0, 4))
 plot.new()
 ```
 
-\FloatBarrier
+\clearpage
 
-### Plot motif signature as a radial tree.
-```{r motifCloud, warning=FALSE, fig.width=3.5, fig.height=3.5, dpi=72, fig.cap=fn("Motif signature plotted as a radial tree", "F")}
+### Plot motif signature as a word cloud in circle.
+```{r motifCloud, warning=FALSE, fig.width=7.5, fig.height=7.5, dpi=72, fig.cap=fn("Motif signature plotted as a word cloud with motif size representing the number of motifs contributed to the signature. The larger the size, the larger the number of motifs that share the motif signature", "F")}
 ## get signature
 gpDist <- c(.5, 1)
 motifSig <- lapply(gpDist, motifSignature, 
@@ -131,23 +131,13 @@ motifSig <- lapply(gpDist, motifSignature,
                    phylog=phylogUPGMAmatAlign, 
                    min.freq=1)
 ## motif cloud, cloud style
-for(i in 1:2){
-    motifCloud(motifSig[[i]], layout="cloud", scale=c(9, .75))
-    op <- par(mar = c(0, 0, 0, 0))
-    text(.5, .985, label=paste("group distance =", gpDist[i]))
-    par(op)
-}
+motifCloud(motifSig[[1]], layout="cloud", scale=c(9, .75))
 ```
 
-```{r fig.cap=fn("Motif signature plotted as a radial tree", "F"), fig.width=0.1, fig.height=0.02, echo=FALSE}
-par(mar=rep(0, 4))
-plot.new()
-```
+\clearpage
 
-\FloatBarrier
-
-###Plot motif signature as a word cloud.
-```{r motifCloudRect, warning=FALSE, fig.width=3.5, fig.height=3.5, fig.cap=fn("Motif signature plotted as a word cloud with motif size representing the number of motifs contributed to the signature. The larger the size, the larger the number of motifs that share the motif signature", "G")}
+###Plot motif signature as a word cloud in rectangle.
+```{r motifCloudRect, warning=FALSE, fig.width=3.5, fig.height=3.5, fig.cap=fn("Motif signature plotted as a word cloud in rectangular by different distances", "G")}
 ## motif cloud, rectangle style
 for(i in 1:2){
     motifCloud(motifSig[[i]], layout="rectangles", ic.scale=FALSE)
@@ -157,12 +147,12 @@ for(i in 1:2){
 }
 ```
 
-```{r fig.cap=fn("Motif signature plotted as a word cloud with motif size representing the number of motifs contributed to the signature. The larger the size, the larger the number of motifs that share the motif signature", "G"), fig.width=0.1, fig.height=0.02, echo=FALSE}
+```{r fig.cap=fn("Motif signature plotted as a word cloud in rectangular by different distances", "G"), fig.width=0.1, fig.height=0.02, echo=FALSE}
 par(mar=rep(0, 4))
 plot.new()
 ```
 
-\FloatBarrier
+\clearpage
 
 ## Supplementary Figure 2H-M. Use various color options to highlight different motif features.
 
@@ -242,7 +232,7 @@ legend(-2.3, 2.4, legend=c("Uniprobe", "CIS-BP"),
 ```
 
 
-\FloatBarrier
+\clearpage
 
 ###Use the color of text of motif names to distinguish the computational algorithms used with the parameter col.leaves.
 ```{r colorsets2, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the color of the text of motif names to separate the computational algorithms used with the parameter col.leaves", "I")}
@@ -256,7 +246,7 @@ legend(-2.3, 2.4, legend=c("DREAM5", "Seed-And-Wobble", "BEEML"),
        border="white", lty=NULL, bty = "n", cex=1)
 ```
 
-\FloatBarrier
+\clearpage
 
 ###Use the color of the background of the motif names to distinguish motifs with high and low IC with the parameter col.leaves.bg.
 ```{r colorsets3, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the color of the background of the motif names to distinguish motifs with high and low IC with the parameter col.leaves.bg", "J")}
@@ -275,7 +265,7 @@ legend(-2.3, 2.4,
 
 ```
 
-\FloatBarrier
+\clearpage
 
 ###Use the color of the inner ring of the motif circle to distinguish the TF with the parameter col.inner.label.circle.
 ```{r colorsets4, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the color of the inner ring of the motif circle to distinguish the TFs with the parameter col.inner.label.circle", "K")}
@@ -293,7 +283,7 @@ legend(1.5, -2, legend=levels.motifGroup[13:21],
        border="black", lty=NULL, bty = "n", ncol=2, cex=.8)
 ```
 
-\FloatBarrier
+\clearpage
 
 ###Use the color of the outer ring of the motif circle to distinguish the TFs with the parameter col.outer.label.circle.
 ```{r colorsets5, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the color of the outer ring of the motif circle to distinguish the TFs with parameter col.outer.label.circle", "L")}
@@ -312,7 +302,7 @@ legend(1.5, -2, legend=levels.motifGroup[13:21],
 
 ```
 
-\FloatBarrier
+\clearpage
 
 ###Use a combination of coloring options to visualize multiple motif features.
 ```{r colorsets6, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use a combination of coloring options to visualize multiple motif feature", "M")}
@@ -334,7 +324,7 @@ legend(-2.3, 2.4,
 detach(motIVout)
 ```
 
-\FloatBarrier
+\clearpage
 
 ## Supplementary Figure 2N-O. Compare different Column Comparison Metrics (CCM) and aligment methods.
 
@@ -346,7 +336,7 @@ Average Log Likelihood Ratio (ALLR) was used as the CCM, and Smith-Waterman Unga
 To run the MatAlign examples, phylip (http://evolution.genetics.washington.edu/phylip/progs.data.dist.html) and MatAlign (http://stormo.wustl.edu/MatAlign/) need to be installed first.
 
 ###Visualize motif alignments generated by MotIV with different CCM and alignment methods.
-```{r MotIV, fig.width=4, fig.height=4, fig.cap=fn("Alignment of mouse PBM data by MotIV with different CCM and alignment methods", "N")}
+```{r MotIV, fig.width=3.5, fig.height=3.5, fig.cap=fn("Alignment of mouse PBM data by MotIV with different CCM and alignment methods", "N")}
 
 sta <- mapply(function(cc, align){
     motIVout <- getMotIVOut(pfms, cc, align)
@@ -383,7 +373,7 @@ par(mar=rep(0, 4))
 plot.new()
 ```
 
-\FloatBarrier
+\clearpage
 
 The number (1:X; 2:Y; 3:Z) on the bottom of the figure 2O and 2P represents the number of motifs from the same TF grouped by different algorithms. 3:Z means that Z number of TFs with 3 of 3 motifs clustered together; 2:Y means that Y number of TFs with 2 of 3 motifs clustered together; 1:X means that X number of TFs failed to cluster any of the 3 motifs together. Thus, the lower the X, the higher the Y and Z, the better the method performed. In this example, MatAlign performed better than MotIV even using the same CCM (ALLR) and alignment method (SWU). 
 
@@ -455,7 +445,7 @@ cnt.1["1"] <- (cnt.1["1"]+cnt.1["2"]*2+cnt.1["3"]*3)/3 - cnt.1["2"] - cnt.1["3"]
 text(0, -2.3, label=paste(names(cnt.1), cnt.1, sep=":", collapse="; "), cex=1.5)
 ```
 
-\FloatBarrier
+\clearpage
 
 ## Supplementary Figure 2P. Improved alignment of fly HD family motifs using MatAlign compared to MotIV. The MatAlign alignment method is superior for discriminating between the closely related motifs in the fly HD family.
 
