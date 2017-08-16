@@ -464,6 +464,9 @@ plotMotifStackWithRadialPhylog(phylog=motIVout$phylog,
                                plotIndex=FALSE)
 text(0, 2.4, label="motIV: cc=ALLR; align=SWU", cex=1.5)
 ```
+
+\clearpage
+
 ```{r revolution.2, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("MatAlign (ALLR and SWU) as the alignment method", "P.b")}
 ## function to read example data
 getMatAlignOut <- function(pcmpath, groupDistance=NA, trim=0.2){
@@ -508,6 +511,7 @@ plotMotifStackWithRadialPhylog(phylog=matAlignOut$phylog,
                                angle=358, plotIndex=FALSE)
 text(0, 2.4, label="MatAlign", cex=1.5)
 ```
+
 \clearpage
 
 ##Session information including the version of R , motifStack and other packages.
