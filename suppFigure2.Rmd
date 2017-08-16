@@ -508,6 +508,9 @@ plotMotifStackWithRadialPhylog(phylog=matAlignOut$phylog,
                                angle=358, plotIndex=FALSE)
 text(0, 2.4, label="MatAlign", cex=1.5)
 ```
+\clearpage
+
+##Session information including the version of R , motifStack and other packages.
 
 ```{r}
 sessionInfo()
