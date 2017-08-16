@@ -12,7 +12,7 @@ output:
     toc: no
 ---
 
-####Supplemental Figure 3. The joint comparison of motifs using MatAlign (3A) or MotIV (3B) between human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in green) HD domain proteins.The length of tree branches reflect motif distances, motifs within a distance threshold of 2.5 are clustered and a merged motif for that cluster is shown. Clusters are numbered by size, with the largest group listed as cluster 1. Branches leading to Drosophila motifs are highlighted in green, mouse motifs in brown and human motifs in purple. Motifs from the human and mouse often grouped by species despite the relatively small evolutionary distance between these organisms. This observation suggests that the motif generation method can have a substantial impact on motif clustering.
+####Supplemental Figure 3. The joint comparison of motifs using MatAlign (3A) or MotIV (3B) between human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in green) HD domain proteins.The length of tree branches reflect motif distances. Clusters are numbered by size, with the largest group listed as cluster 1. Motifs from the human and mouse often grouped by species despite the relatively small evolutionary distance between these organisms. This observation suggests that the motif generation method can have a substantial impact on motif clustering.
 
 
 ```{r setup, include=FALSE, echo=FALSE}
@@ -169,7 +169,7 @@ legend(-2, 2.2,
 detach(FlyMousePBMHuman.MotIV)
 ```
 
-```{r EN, fig.width=8, fig.height=4, dpi=72, fig.cap=fn("Alignment of engrailed orthologs by MatAlign", "C"), echo=FALSE}
+```{r EN, fig.width=8, fig.height=4, dpi=72, fig.cap=fn("Alignment of engrailed orthologs by MatAlign", "C"), echo=FALSE, eval=FALSE}
 gpDis <- 2
 
 # Supplementary Figure 3G. Align motifs of engrailed orthologs by MatAlign
