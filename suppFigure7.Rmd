@@ -36,7 +36,7 @@ getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
     motifs <- pfms[leaves]
     if(!is.na(groupDistance)){
         motifSig <- motifSignature(motifs, phylog, groupDistance=groupDistance,
-                                   min.freq=1, trim=trim)
+                                   min.freq=1, trim=trim, sort=FALSE)
         sig <- signatures(motifSig)
         gpCol <- sigColor(motifSig)
     }else{
@@ -71,7 +71,7 @@ motifPiles(phylog=.ele$phylog, .ele$motifs,
            col.tree=species, col.leaves=species, 
            col.pfms2=.ele$gpCol, 
            col.pfms2.width=.01, labels.leaves=leaveNames, 
-           plotIndex=c(FALSE,TRUE), IndexCex=1.5, 
+           plotIndex=c(FALSE,TRUE), IndexCex=1.5, motifScale='none',
            groupDistance=4, clabel.leaves=3)\n\n
 ```\n\n", sep="")
     cat(knit(text=knit_expand(text=text)))
