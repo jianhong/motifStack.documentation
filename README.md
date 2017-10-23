@@ -2,16 +2,16 @@ This is a helper documentation of motifStack.
 
 [Docker](https://docs.docker.com/) container allows software to be packaged into containers which can be run in any platform. Users can download the motifStack docker image using the following code snippet and render the rmarkdown files.
 
-In Docker jianhong/motifstack, Matalign and phylip/neighbor are installed at /usr/bin. In Docker jianhong/motifstack_1.21.1, git, texlive and pandoc are also installed.
+In Docker jianhong/motifstack, Matalign and phylip/neighbor are installed at /usr/bin. In Docker jianhong/motifstack_1.21.6, git, texlive and pandoc are also installed.
 
 ## how to run
 <pre>
 ## in windows, open docker terminal
 cd ~
-docker pull jianhong/motifstack_1.21.1
+docker pull jianhong/motifstack_1.21.6
 mkdir tmp4motifstack ## this will be the share folder for your host and container.
-docker run -ti --rm -v ${PWD}/tmp4motifstack:/volume/data jianhong/motifstack_1.21.1 bash
-## in motifstack-1.21.1 docker
+docker run -ti --rm -v ${PWD}/tmp4motifstack:/volume/data jianhong/motifstack_1.21.6 bash
+## in motifstack-1.21.6 docker
     1  cd /volume/data
     2  git clone https://github.com/jianhong/motifStack.documentation.git
     3  cd motifStack.documentation/
