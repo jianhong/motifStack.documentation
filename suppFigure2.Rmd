@@ -514,9 +514,9 @@ text(0, 2.4, label="MatAlign", cex=1.5)
 
 \clearpage
 
-## Supplementary Figure 2Q. Import PFMs/PCMs files from Transfac, CisBP, or JASPAR format in batch mode.
+## Supplementary Figure 2Q. Import PFMs/PCMs files in Transfac, CisBP, or JASPAR format in batch mode.
 
-```{r importMatrix, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Import PFMs/PCMs files from Transfac, CisBP, or JASPAR format", "Q"), message=FALSE, warning=FALSE, error=FALSE}
+```{r importMatrix, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Aligned motifs imported from PFMs/PCMs files in Transfac, CisBP, or JASPAR format in batch mode.", "Q"), message=FALSE, warning=FALSE, error=FALSE}
 path <- system.file("extdata", package = "motifStack", mustWork = TRUE)
 pcms <- importMatrix(dir(path, "*.pcm", full.names = TRUE), format = "pcm", to = "pcm")
 JASPAR <- importMatrix(dir(path, "*.jaspar", full.names = TRUE))
@@ -531,9 +531,9 @@ motifStack(motifs, layout = "phylog")
 
 \clearpage
 
-## Supplementary Figure 2H. Plotting affinity logo.
+## Supplementary Figure 2R. Plot affinity logo from a position specific affinity matrix (PSAM).
 
-```{r plotAffinityLogo, fig.width=12, fig.height=4, dpi=72, fig.cap=fn("affinity logos for a position specifice affinity matrix (PSAM)", "H"), message=FALSE, warning=FALSE, error=FALSE}
+```{r plotAffinityLogo, fig.width=12, fig.height=4, dpi=72, fig.cap=fn("PSAM plotted as an affinity logo.", "R"), message=FALSE, warning=FALSE, error=FALSE}
 psam <- importMatrix(file.path(path, "PSAM.mxr"), format = "psam")[[1]]
 motifStack(psam)
 ```
