@@ -7,11 +7,11 @@ In Docker jianhong/motifstack, Matalign and phylip/neighbor are installed at /us
 ## how to run
 <pre>
 ## in windows, open docker terminal
-cd ~
-docker pull jianhong/motifstack_1.21.6
+cd ~ ## in windows, please try cd c:\\ Users\\ username
+docker pull jianhong/motifstack:latest
 mkdir tmp4motifstack ## this will be the share folder for your host and container.
-docker run -ti --rm -v ${PWD}/tmp4motifstack:/volume/data jianhong/motifstack_1.21.6 bash
-## in motifstack-1.21.6 docker
+docker run -ti --rm -v ${PWD}/tmp4motifstack:/volume/data jianhong/motifstack:latest bash
+  In motifstack:latest docker
     1  cd /volume/data
     2  git clone https://github.com/jianhong/motifStack.documentation.git
     3  cd motifStack.documentation/
