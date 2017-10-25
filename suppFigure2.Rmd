@@ -531,7 +531,7 @@ motifStack(motifs, layout = "phylog")
 
 \clearpage
 
-## Supplementary Figure 2R. Plot affinity logo from a position specific affinity matrix (PSAM).
+## Supplementary Figure 2R. Plot affinity logo from a position specific affinity matrix (PSAM) as described in paper "Statistical mechanical modeling of genome-wide transcription factor occupancy data by MatrixREDUCE" puslised in BIOINFORMATICS in 2006.
 
 ```{r plotAffinityLogo, fig.width=12, fig.height=4, dpi=72, fig.cap=fn("PSAM plotted as an affinity logo.", "R"), message=FALSE, warning=FALSE, error=FALSE}
 psam <- importMatrix(file.path(path, "PSAM.mxr"), format = "psam")[[1]]
