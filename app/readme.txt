@@ -10,4 +10,4 @@ Perl script requires modules:
   Data
   IO
 
-Please change the path according your system.
+Please change the path according to your system.
