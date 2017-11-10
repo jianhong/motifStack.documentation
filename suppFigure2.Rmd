@@ -27,6 +27,9 @@ library(motifStack)
 ##read pcms (position count matrices)
 pcmpath <- "pcmsDatasetDM"
 pcms <- readPCM(pcmpath)
+## color blindness
+source("safeColor.R")
+pcms <- safeColor(pcms)
 ##convert to pfms (position frequency matrices)
 pfms<-lapply(pcms,pcm2pfm)
 ```
@@ -81,6 +84,7 @@ neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
 MatAlign2tree_path <- "./MatAlign2tree.pl"
 pcmpath <- "pcmsDatasetDM"
 pcms <- readPCM(pcmpath)
+pcms <- safeColor(pcms)
 pfms<-lapply(pcms,pcm2pfm)
 system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, 
              "--out", outpath,
@@ -110,7 +114,8 @@ for(groupDistance in c(0, 1, 2, 3)){
                                    cleaves=.2, circle=1, circle.motif=1.5, 
                                    clabel.leaves=.4, motifScale="logarithmic", 
                                    angle=358, plotIndex=TRUE, IndexCex=.6, 
-                                   groupDistance=groupDistance)
+                                   groupDistance=groupDistance,
+                                   groupDistanceLineCol="#D55E00")
     text(0, 2.3, label=paste("group distance =", groupDistance), cex=2)
 }
 ```
@@ -187,13 +192,13 @@ getMotIVOut <- function(pfms, cc, align){
     leaveNames <-names(phylog$leaves)
     ## data source
     dataSource <- factor(grepl("_M", leaveNames))
-    levels(dataSource) <- c("yellow", "blue") ##c("Uniprobe", "CIS-BP")
+    levels(dataSource) <- c("#F0E442", "#56B4E9") ##c("Uniprobe", "CIS-BP")
     dataSource <- as.character(dataSource)
     ## algorithm
     algorithm <- 
         factor((!grepl("_M", leaveNames)) + grepl("_bml", leaveNames))
     levels(algorithm) <- 
-        c("blue", "brown", "orange") ##("DREAM5", "Seed-And-Wobble", "BEEML")
+        c("#0072B2", "#CC79A7", "#E69F00") ##("DREAM5", "Seed-And-Wobble", "BEEML")
     algorithm <- as.character(algorithm)
     ## motifs from same PBM data
     motifGroup <- factor(gsub("(.*?)_.*$", "\\1", leaveNames))
@@ -212,6 +217,7 @@ getMotIVOut <- function(pfms, cc, align){
 ##read pcms
 pcmpath <- "pcmsDatasetAlgorithm"
 pcms <- readPCM(pcmpath)
+pcms <- safeColor(pcms)
 ##convert to pfms
 pfms<-lapply(pcms,pcm2pfm)
 ```
@@ -226,7 +232,7 @@ plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             cleaves=.2, circle=1.1, circle.motif=1.6, 
                             clabel.leaves=.8, angle=358)
 legend(-2.3, 2.4, legend=c("Uniprobe", "CIS-BP"), 
-       fill= highlightCol(c("yellow", "blue"), alpha=.3), 
+       fill= highlightCol(c("#F0E442", "#56B4E9"), alpha=.3), 
        border="white", lty=NULL, bty = "n", cex=1)
 
 ```
@@ -242,7 +248,7 @@ plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             cleaves=.2, circle=1.1, circle.motif=1.6, 
                             clabel.leaves=.8, angle=358)
 legend(-2.3, 2.4, legend=c("DREAM5", "Seed-And-Wobble", "BEEML"), 
-       fill= c("blue", "brown", "orange"), 
+       fill= c("#0072B2", "#CC79A7", "#E69F00"), 
        border="white", lty=NULL, bty = "n", cex=1)
 ```
 
@@ -317,7 +323,7 @@ legend(-2.3, 2.4,
        legend=c("algorithm", "Mm/PBM/DREAM5", "Mm/PBM/Seed-And-Wobble", 
                 "Mm/PBM/BEEML", "Information Content", "<= 0.6", "> 0.6"), 
        fill= c("white", 
-               highlightCol(c("blue", "brown", "orange"), alpha=.3), 
+               highlightCol(c("#0072B2", "#CC79A7", "#E69F00"), alpha=.3), 
                "white", highlightCol(c("black", "lightgray"), alpha=.3)), 
        border="white", lty=NULL, bty = "n", cex=.8)
 
@@ -352,7 +358,7 @@ sta <- mapply(function(cc, align){
     legend(-2.3, 2.4, 
            legend=c("Mm/PBM/DREAM5", "Mm/PBM/Seed-And-Wobble", 
                     "Mm/PBM/BEEML"), 
-           fill= highlightCol(c("blue", "brown", "orange"), alpha=.3), 
+           fill= highlightCol(c("#0072B2", "#CC79A7", "#E69F00"), alpha=.3), 
            border="white", lty=NULL, bty = "n", cex=.5)
     text(0, 2.3, label=paste("cc=", cc, "; align=", align), cex=1.5)
     cnt <- rle(motifGroup)
@@ -400,11 +406,11 @@ this_motifs <- pfms[leaveNames]
 
 ## data source
 dataSource <- factor(grepl("_M", leaveNames))
-levels(dataSource) <- c("yellow", "blue") ##c("Uniprobe", "CIS-BP")
+levels(dataSource) <- c("#F0E442", "#56B4E9") ##c("Uniprobe", "CIS-BP")
 dataSource <- as.character(dataSource)
 ## algorithm
 algorithm <- factor((!grepl("_M", leaveNames)) + grepl("_bml", leaveNames))
-levels(algorithm) <- c("blue", "brown", "orange") ##("DREAM5", "Seed-And-Wobble", "BEEML")
+levels(algorithm) <- c("#0072B2", "#CC79A7", "#E69F00") ##("DREAM5", "Seed-And-Wobble", "BEEML")
 algorithm <- as.character(algorithm)
 ## motifs from the same PBM data source
 motifGroup <- factor(gsub("(.*?)_.*$", "\\1", leaveNames))
@@ -433,7 +439,7 @@ legend(1.5, -2, legend=levels.motifGroup[13:21],
        border="black", lty=NULL, bty = "n", ncol=2, cex=.8)
 legend(-2.35, 2.4, 
        legend=c("Mm/PBM/DREAM5", "Mm/PBM/Seed-And-Wobble", "Mm/PBM/BEEML"),
-       fill= highlightCol(c("blue", "brown", "orange"), alpha=.3), 
+       fill= highlightCol(c("#0072B2", "#CC79A7", "#E69F00"), alpha=.3), 
        border="white", lty=NULL, bty = "n", cex=.8)
 cnt <- rle(motifGroup)
 cnt <- split(algorithm, rep(1:length(cnt$lengths), cnt$lengths))
@@ -452,6 +458,7 @@ text(0, -2.3, label=paste(names(cnt.1), cnt.1, sep=":", collapse="; "), cex=1.5)
 ```{r revolution.1, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("MotIV(ALLR and SWU) as the alignment method", "P.a")}
 pcmpath <- "pcmsDatasetDM"
 pcms <- readPCM(pcmpath)
+pcms <- safeColor(pcms)
 pfms<-lapply(pcms,pcm2pfm)
 motIVout <- getMotIVOut(pfms, "ALLR", "SWU")
 plotMotifStackWithRadialPhylog(phylog=motIVout$phylog, 
@@ -471,6 +478,7 @@ text(0, 2.4, label="motIV: cc=ALLR; align=SWU", cex=1.5)
 ## function to read example data
 getMatAlignOut <- function(pcmpath, groupDistance=NA, trim=0.2){
     pcms <- readPCM(pcmpath)
+    pcms <- safeColor(pcms)
     pfms<-lapply(pcms,pcm2pfm)
     source("zzz.R")
     system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, 
@@ -526,6 +534,7 @@ cisbp <- importMatrix(file.path(path, "PWM.cisbp"))
 motifs <- unlist(c(pcms, JASPAR, pfms, transfac, cisbp))
 motifs[sapply(motifs, class)=="pcm"] <- 
   lapply(motifs[sapply(motifs, class)=="pcm"], pcm2pfm)
+motifs <- safeColor(motifs)
 motifStack(motifs, layout = "phylog")
 ```
 
@@ -535,6 +544,7 @@ motifStack(motifs, layout = "phylog")
 
 ```{r plotAffinityLogo, fig.width=12, fig.height=4, dpi=72, fig.cap=fn("PSAM plotted as an affinity logo.", "R"), message=FALSE, warning=FALSE, error=FALSE}
 psam <- importMatrix(file.path(path, "PSAM.mxr"), format = "psam")[[1]]
+psam <- safeColor(psam)
 motifStack(psam)
 ```
 

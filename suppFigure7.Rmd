@@ -21,12 +21,14 @@ opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!
 library(motifStack)
 ```
 ```{r dataInput, echo=FALSE}
+source("safeColor.R")
 outpath <- "output"
 matalign_path <- "./app/matalign-v4a"
 neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
 MatAlign2tree_path <- "./MatAlign2tree.pl"
 getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
+    pcms <- safeColor(pcms)
     pfms<-lapply(pcms,pcm2pfm)
     system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, "--out", outpath,
              "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
@@ -54,9 +56,9 @@ pcmpath <- dir("pcmsUni", include.dirs=TRUE)[13]
 matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
                       getMatAlignOut, groupDistance=4)
 description <- ""
-colorSet <- c("Dm"="#00FC00", 
-              "Mm"="brown", "Ms"="#F69156", 
-              "Hs"="#D900D9")
+colorSet <- c("Dm"="#009E73", 
+              "Mm"="#D55E00", "Ms"="#E69F00", 
+              "Hs"="#CC79A7")
 ```
 
 ```{r expand, echo=FALSE}
@@ -72,7 +74,8 @@ motifPiles(phylog=.ele$phylog, .ele$motifs,
            col.pfms2=.ele$gpCol, 
            col.pfms2.width=.01, labels.leaves=leaveNames, 
            plotIndex=c(FALSE,TRUE), IndexCex=1.5, motifScale='none',
-           groupDistance=4, clabel.leaves=3)\n\n
+           groupDistance=4, clabel.leaves=3,
+           groupDistanceLineCol='#D55E00')\n\n
 ```\n\n", sep="")
     cat(knit(text=knit_expand(text=text)))
 }
@@ -86,13 +89,14 @@ sta <- mapply(function(.ele, name, ID, des){
 ```
 
 ```{r echo=FALSE}
-colorSet <- c("Dm"="#00FC00", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
-              "Mm"="brown", "MmDREAM"="blue", "Ms"="#F69156", 
-              "Hs"="#D900D9")
+colorSet <- c("Dm"="#009E73", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
+              "Mm"="#D55E00", "MmDREAM"="blue", "Ms"="#E69F00", 
+              "Hs"="#CC79A7")
 
 ## function to read example data
 readDataDoAna <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
+    pcms <- safeColor(pcms)
     pfms<-lapply(pcms,pcm2pfm)
     system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, "--out", outpath,
              "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))

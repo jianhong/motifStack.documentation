@@ -26,12 +26,14 @@ opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!
 library(motifStack)
 ```
 ```{r dataInput, echo=FALSE}
+source("safeColor.R")
 outpath <- "output"
 matalign_path <- "./app/matalign-v4a"
 neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
 MatAlign2tree_path <- "./MatAlign2tree.pl"
 getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
+    pcms <- safeColor(pcms)
     pfms<-lapply(pcms,pcm2pfm)
     system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, "--out", outpath,
              "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
@@ -59,9 +61,9 @@ pcmpath <- dir("pcmsUni", include.dirs=TRUE)[1:7]
 matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
                       getMatAlignOut, groupDistance=4)
 description <- ""
-colorSet <- c("Dm"="#00FC00", 
-              "Mm"="brown", "Ms"="#F69156", 
-              "Hs"="#D900D9")
+colorSet <- c("Dm"="#009E73", 
+              "Mm"="#D55E00", "Ms"="#E69F00", 
+              "Hs"="#CC79A7")
 ```
 
 ```{r expand, echo=FALSE}
