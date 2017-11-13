@@ -72,6 +72,25 @@ legend(-2.4, 2.4, legend=c("Mm/Uniprobe/PBM/Seed-And-Wobble", "Mm/CIS-BP/PBM/DRE
 text(2.05, 2.3, labels="Information Content")
 rasterImage(icgp.image, 2, 1.8, 2.04, 2.2, interpolate = FALSE)
 text(c(2.05, 2.05), c(1.8, 2.2), labels=format(icgp.ranges, digits=3), adj=0)
+```
+
+```{r epsOutput, echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+calculateSolidColorFromTransparentColorOverWhite <- function(color, alpha){
+  cols <- col2rgb(color)
+  cols <- round(alpha * cols + (1 - alpha) * 255)
+  apply(cols, 2, function(.ele) do.call(rgb, c(as.list(.ele), maxColorValue=255)))
+}
+
+setEPS()
+postscript("figure1.eps", width = 6, height = 6)
+motifCircos(phylog=phylog, pfms=motifs, col.tree.bg=calculateSolidColorFromTransparentColorOverWhite(methods, .3), col.tree.bg.alpha=1, r.rings=c(.1, .1), col.rings=list(icgp, rep("white", length(icgp))), col.inner.label.circle=gpCol, inner.label.circle.width=0.05, labels.leaves=leaveNames, col.leaves=leaveCol, cleaves=.1, r.tree=1, r.leaves=.5, clabel.leaves=.45, motifScale="logarithmic", angle=358, groupDistance=gpDis, plotIndex=TRUE, IndexCex=.5, groupDistanceLineCol='#D55E00')
+
+legend(-2.4, 2.4, legend=c("Mm/Uniprobe/PBM/Seed-And-Wobble", "Mm/CIS-BP/PBM/DREAM5", "Mm/CIS-BP/SELEX"), fill=calculateSolidColorFromTransparentColorOverWhite(colorSet[c("Mm", "MmDREAM", "Ms")], .3), border="white", lty=NULL, bty = "n", cex = .5)
+
+text(2.05, 2.3, labels="Information Content", cex = .5)
+rasterImage(icgp.image, 2, 1.8, 2.04, 2.2, interpolate = FALSE)
+text(c(2.05, 2.05), c(1.8, 2.2), labels=format(icgp.ranges, digits=3), adj=0, cex = .5)
+dev.off()
 
 detach(MmPBM_SELEX)
 ```
