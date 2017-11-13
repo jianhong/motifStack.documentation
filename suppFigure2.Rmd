@@ -17,6 +17,8 @@ fn = local({
     paste('__Supplementary Figure 2', letter, '__: ', x, sep = '')
   }
 })
+library(knitr)
+opts_chunk$set(warning=FALSE, message=FALSE)
 ```
 
 
@@ -73,7 +75,7 @@ motifStack(pfms, layout="radialPhylog")
 
 ## Supplementary Figure 2E-G. Merge motifs with different distance cutoffs and display these motif signatures in various layouts.
 
-Before motifs are merged, the distances of the motifs are calculated using STAMP, MovIV or MatAlign. Here we show different ways to display the merged motifs and how different distance cutoffs affect the resulting motif sigatures. The red dotted line indicates the distance cutoff used.
+Before motifs are merged, the distances of the motifs are calculated using STAMP, MovIV or MatAlign. Here we show different ways to display the merged motifs and how different distance cutoffs affect the resulting motif sigatures. The magenta dotted line indicates the distance cutoff used.
 
 ### Merge motifs using different distance cutoffs.
 

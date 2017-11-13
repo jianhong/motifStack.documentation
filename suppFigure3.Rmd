@@ -1,5 +1,5 @@
 ---
-title: "Supplementary Figure 3. Joint Alignment and Visualization of Motifs from Fly, Mouse and Human HD Family"
+title: "Supplementary Figure 3. Alignment and Visualization of Motifs from Fly, Mouse and Human HD Family"
 output:
   pdf_document:
     fig_caption: yes
@@ -12,7 +12,7 @@ output:
     toc: no
 ---
 
-####Supplemental Figure 3. The joint comparison of motifs using MatAlign (3B) or MotIV (3C) between human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in green) HD domain proteins.The length of tree branches reflect motif distances. Clusters are numbered by size, with the largest group listed as cluster 1. Motifs from the human and mouse often grouped by species despite the relatively small evolutionary distance between these organisms. This observation suggests that the motif generation method can have a substantial impact on motif clustering.
+####Supplemental Figure 3. Comparison of motifs using MatAlign (3B) or MotIV (3C) between human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in turquoise) HD domain proteins.The length of tree branches reflect motif distances. Clusters are numbered by size, with the largest group listed as cluster 1. Motifs from the human and mouse often grouped by species despite the relatively small evolutionary distance between these organisms. This observation suggests that the motif generation method can have a substantial impact on motif clustering.
 
 
 ```{r setup, include=FALSE, echo=FALSE}
@@ -21,6 +21,8 @@ fn = local({
     paste('__Supplementary Figure 3', letter, '__: ', x, sep = '')
   }
 })
+library(knitr)
+opts_chunk$set(warning=FALSE, message=FALSE)
 ```
 
 ```{r loadLib, message=FALSE, warning=FALSE, error=FALSE, echo=FALSE}
@@ -101,7 +103,7 @@ getMotIVOut <- function(pcmpath, cc, align, groupDistance=.005, trim=0.2){
 ```
 
 
-```{r Fly_DNA, fig.width=8, fig.height=11, dpi=72, fig.cap=fn("A linear dendrogram of all Drosophila HD motifs illustrates how _motifStack_ can be used to visualize the relationships between TF motifs, including aligned motifs for individual TFs (center) and motif signatures for motif clusters (far right), where the logo size scales with the number of members within the cluster. Motif clusters are determined using a user-defined distance threshold (dashed vemillion line), and are delineated using alternating light and dark grey bars that are numbered based on cluster size.", "A"), echo=FALSE}
+```{r Fly_DNA, fig.width=8, fig.height=11, dpi=72, fig.cap=fn("A linear dendrogram of all Drosophila HD motifs illustrates how motifStack can be used to visualize the relationships between TF motifs, including aligned motifs for individual TFs (center) and motif signatures for motif clusters (far right), where the logo size scales with the number of members within the cluster. Motif clusters are determined using a distance threshold of 2 (dashed magenta line), and are delineated using alternating light and dark grey bars that are numbered based on cluster size.", "A"), echo=FALSE}
 gpDis <- 2
 Fly_DNA <- getMatAlignOut("pcmsDatasetFly", groupDistance=gpDis)
 attach(Fly_DNA)
@@ -120,7 +122,7 @@ detach(Fly_DNA)
 ```
 
 
-```{r FlyMousePBMHuman, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Alignment of motifs from fly, mouse and human by MatAlign", "B"), echo=FALSE}
+```{r FlyMousePBMHuman, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Alignment of motifs from fly, mouse and human by MatAlign. Joint comparison of motifs with MatAlign using motifs from human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in turquoise) HD domain proteins. The length of tree branches reflect motif distances. Motif clusters determined with a distance threshold of 2.5 are indicated by the alternating light and dark grey bars that are numbered by size, with the largest group listed as cluster 1. A single merged motif is shown for each cluster.", "B"), echo=FALSE}
 gpDis <- 2.5
 # Supplementary Figure 3I. Align motifs from fly, mouse and human by MatAlign
 FlyMousePBMHuman <- getMatAlignOut("pcmsDatasetFlyMousePBMHuman",
@@ -156,7 +158,7 @@ legend(-2, 2.2,
 detach(FlyMousePBMHuman)
 ```
 
-```{r FlyMousePBMHuman.MotIV, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Alignment of motifs from fly, mouse and human by MotIV", "C"), echo=FALSE}
+```{r FlyMousePBMHuman.MotIV, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Alignment of motifs from fly, mouse and human by MotIV. Joint comparison of motifs with MotIV using a distance threshold of 0.005 with the same data sets and display settings as Supplemental Figure 3B.", "C"), echo=FALSE}
 gpDis <- 0.005
 
 # Supplementary Figure 3J. Align motifs from fly vs mouse and human by MotIV
@@ -193,10 +195,10 @@ legend(-2, 2.2,
 detach(FlyMousePBMHuman.MotIV)
 ```
 
-```{r EN, fig.width=8, fig.height=4, dpi=72, fig.cap=fn("HD motifs of Engrailed homologs from Drosophila, mouse and human illustrates how different experimental and computational methods can influence the resulting binding site motifs for orthologous proteins. Dm/FFS/B1H, colored in green, represents fly B1H binding site data. Hs/CIS-BP/SELEX, colored in vemillion, represents human SELEX data. Mm/Uniprobe/PBM/Seed-And-Wobble, colored in orange, represents mouse PBM data analyzed by the Seed and Wobble motif discovery tool. Mm/CIS-BP/PBM/Dream5, colored in blue, is mouse PBM data analyzed by the Dream5 motif discovery tool (see Supplementary Notes).", "D"), echo=FALSE, eval=TRUE}
+```{r EN, fig.width=8, fig.height=4, dpi=72, fig.cap=fn("HD motifs of Engrailed homologs from Drosophila, mouse and human illustrates how different experimental and computational methods can influence the resulting binding site motifs for orthologous proteins. Motif clusters are determined using a distance threshold of 2 (dashed magenta line). Dm/FFS/B1H (colored in turquoise) represents fly B1H binding site data. Hs/CIS-BP/SELEX (colored in purple) represents human SELEX data. Mm/Uniprobe/PBM/Seed-And-Wobble (colored in magenta) represents mouse PBM data analyzed by the Seed and Wobble motif discovery tool. Mm/CIS-BP/PBM/Dream5 (colored in blue) is mouse PBM data analyzed by the Dream5 motif discovery tool.", "D"), echo=FALSE, eval=TRUE}
 gpDis <- 2
 
-# Supplementary Figure 3G. Align motifs of engrailed orthologs by MatAlign
+# Supplementary Figure 3D. Align motifs of engrailed orthologs by MatAlign
 EN <- getMatAlignOut("pcmsDatasetEn", groupDistance=gpDis)
 attach(EN)
 
