@@ -12,7 +12,7 @@ output:
     toc: no
 ---
 
-####Supplemental Figure 3. Comparison of motifs using MatAlign (3B) or MotIV (3C) between human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in turquoise) HD domain proteins.The length of tree branches reflect motif distances. Clusters are numbered by size, with the largest group listed as cluster 1. Motifs from the human and mouse often grouped by species despite the relatively small evolutionary distance between these organisms. This observation suggests that the motif generation method can have a substantial impact on motif clustering.
+### Supplemental Figure 3. Comparison of motifs using MatAlign (3B) or MotIV (3C) between human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in turquoise) HD domain proteins.The length of tree branches reflect motif distances. Clusters are numbered by size, with the largest group listed as cluster 1. Motifs from the human and mouse often grouped by species despite the relatively small evolutionary distance between these organisms. This observation suggests that the motif generation method can have a substantial impact on motif clustering.
 
 
 ```{r setup, include=FALSE, echo=FALSE}

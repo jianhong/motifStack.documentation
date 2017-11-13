@@ -51,7 +51,7 @@ plotMotifStackWithRadialPhylog(phylog=phylog, pfms=DNAmotifAlignment(motifs),
                                angle=358, init.angle=-45, plotIndex=F)
 ```
 
-```{r Figure1.motifRadialPhylog2, fig.cap=fn("signatures with circular dendograms"), fig.width=5, fig.height=5, echo=FALSE}
+```{r Figure1.motifRadialPhylog2, fig.cap=fn("signatures with circular dendograms"), fig.width=10, fig.height=10, echo=FALSE}
 motifSig <- motifSignature(motifs, phylog, groupDistance=2.5, min.freq=1)
 sig <- signatures(motifSig)
 gpCol <- sigColor(motifSig)
