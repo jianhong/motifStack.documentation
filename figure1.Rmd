@@ -1,9 +1,10 @@
 ---
-title: "Figure1"
 output:
   pdf_document:
-    fig_caption: yes
+    fig_caption: no
     toc: no
+    includes:
+      in_header: header.tex
 ---
 
 
@@ -43,7 +44,7 @@ readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2
 
 ```
 
-```{r MmPBM_SELEX, fig.width=12, fig.height=12, dpi=72, fig.cap="Mouse data from different methods", echo=FALSE}
+```{r MmPBM_SELEX, fig.width=12, fig.height=12, dpi=72, fig.cap="Mouse data from different methods", echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 gpDis <- 2.5
 MmPBM_SELEX <- readDataDoAna("pcmsDatasetMmPBM_SELEX", groupDistance=gpDis)
 attach(MmPBM_SELEX)

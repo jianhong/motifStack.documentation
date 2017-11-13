@@ -83,7 +83,7 @@ motifPiles(phylog=.ele$phylog, .ele$motifs,
 
 ```{r plots, results='asis', echo=FALSE}
 sta <- mapply(function(.ele, name, ID, des){
-    kexpand(.ele, id=ID, cap="__Supplementary Figure 7a__: Species-specific motifs for fly or human/mouse. Species-specific motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data) and green (Fly/B1H data)", figheight=ceiling(.25*length(.ele$leaves)), des)
+    kexpand(.ele, id=ID, cap="__Supplementary Figure 7a__: Species-specific motifs for fly or human/mouse. Species-specific motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data) and turquoise (Fly/B1H data)", figheight=ceiling(.25*length(.ele$leaves)), des)
 }, matAlignOut, pcmpath, 1:length(pcmpath), description)
 
 ```
@@ -123,7 +123,7 @@ readDataDoAna <- function(pcmpath, groupDistance=2.5, trim=0.2){
 
 ```
 
-```{r Fly_DNA, fig.width=6, fig.height=6, dpi=150, fig.cap="__Supplementary Figure 7b__: Species-specific motifs in the HD family plotted together with common motif clusters. Clusters shared between Drosophila and mammals are shown in gray. Species-specific motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data) and green (Fly/B1H data).", echo=FALSE}
+```{r Fly_DNA, fig.width=6, fig.height=6, dpi=150, fig.cap="__Supplementary Figure 7b__: Species-specific motifs in the HD family plotted together with common motif clusters. Clusters shared between Drosophila and mammals are shown in gray. Species-specific motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data) and turquoise (Fly/B1H data).", echo=FALSE}
 gpDis <- 2
 Fly_DNA <- readDataDoAna("pcmsDatasetFly", groupDistance=gpDis)
 unUnique <- Fly_DNA$sig

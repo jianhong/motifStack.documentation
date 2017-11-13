@@ -12,7 +12,7 @@ output:
     toc: no
 ---
 
-##Motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data), orange (mouse/SELEX) and green (Fly/B1H data).
+##Motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data), orange (mouse/SELEX) and turquoise (Fly/B1H data).
 
 ##Some of the HD TFs in the SELEX dataset have both monomeric and dimeric motifs. We have aligned the dimeric motif clusters with the associated monomeric motif clusters for the same TFs. Examples of these motif clusters include the ALX1/PHOX2 cluster (Supplementary Figure 5.01), the BarH cluster (Supplementary Figure 5.02), the EMX cluster (Supplementary Figure 5.03), the En/GBX cluster (Supplementary Figure 5.04), the IRX cluster (Supplementary Figure 5.05), the MSX cluster (Supplementary Figure 5.06) and the Cphx cluster (Supplementary Figure 5.07).  Generally, members of a dimeric motif cluster have a monomeric motif that clusters with a fly HD, suggesting that the absence of a fly TF in a dimeric cluster may be a methodological difference rather than a biological one.
 

@@ -88,7 +88,7 @@ sta <- mapply(function(.ele, name, ID, des){
     TF.name <- gsub("Platform", "", gsub("Cluster", "", name))
     #kexpand(.ele, id=ID, cap=paste0("Supplementary Figure 6.", TF.name),
     #  figheight=ceiling(.25*length(.ele$leaves)), des)
-    kexpand(.ele, id="", cap="__Supplemental Figure 6__. Motifs of HOX and caudal related TFs are shown in purple (human), brown and orange (mouse) and green (fly). These TFs cluster into two different motif groups, one with fly motifs and the other without fly motifs",
+    kexpand(.ele, id="", cap="__Supplemental Figure 6__. Motifs of HOX and caudal related TFs are shown in purple (human), brown and orange (mouse) and turquoise (fly). These TFs cluster into two different motif groups, one with fly motifs and the other without fly motifs",
         figheight=ceiling(.25*length(.ele$leaves)), "")    
 }, matAlignOut, pcmpath, 1:length(pcmpath), "")
 

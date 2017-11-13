@@ -1,0 +1,115 @@
+---
+title: "Supplementary Figure 1. Typical workflows for the analysis and visualization of TF DNA binding site motifs using motifStack"
+output: 
+  pdf_document:
+    fig_caption: yes
+    toc: no
+    includes:
+      in_header: header.tex
+  html_document:
+    fig_caption: yes
+    self_contained: no
+    toc: no
+---
+```{r setup, include=FALSE, echo=FALSE}
+library(knitr)
+opts_knit$set(progress=FALSE, verbose=FALSE, keep_md=TRUE)
+opts_chunk$set(comment=NA, warning=FALSE, message=FALSE, fig.width=8, fig.pos="!htb", echo=FALSE)
+fn = local({
+  function(x, letter, auto=FALSE) {
+    paste('__Supplementary Figure 1__: ', x, sep = '')
+  }
+})
+```
+```{r loadLib, message=FALSE, warning=FALSE, error=FALSE, echo=FALSE}
+##load the library
+library(motifStack)
+```
+```{r dataInput, echo=FALSE}
+source("safeColor.R")
+outpath <- "output"
+matalign_path <- "./app/matalign-v4a"
+neighbor_path <- "./app/neighbor.app/Contents/MacOS/neighbor"
+MatAlign2tree_path <- "./MatAlign2tree.pl"
+pcmpath <- "pcmFigure1"
+pcms <- readPCM(pcmpath)
+pcms <- safeColor(pcms)
+pfms<-lapply(pcms,pcm2pfm)
+system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, "--out", outpath,
+             "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
+newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
+phylog <- newick2phylog(newickstrUPGMA, FALSE)
+leaves <- names(phylog$leaves)
+motifs <- pfms[leaves]
+leaveNames <- gsub("^.{3}", "", names(phylog$leaves))
+```
+
+```{r Figure1.motifRadialPhylog, fig.cap=fn("motifs with circular dendograms"), fig.width=5, fig.height=5, echo=FALSE}
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=DNAmotifAlignment(motifs),
+                               labels.leaves=leaveNames, cleaves=.2, circle=.8, 
+                               circle.motif=1.1, clabel.leaves=1, 
+                               angle=358, init.angle=-45, plotIndex=F)
+```
+
+```{r Figure1.motifRadialPhylog2, fig.cap=fn("signatures with circular dendograms"), fig.width=5, fig.height=5, echo=FALSE}
+motifSig <- motifSignature(motifs, phylog, groupDistance=2.5, min.freq=1)
+sig <- signatures(motifSig)
+gpCol <- sigColor(motifSig)
+plotMotifStackWithRadialPhylog(phylog=phylog, pfms=sig, col.bg.alpha=.3, 
+                               col.inner.label.circle= gpCol, 
+                               labels.leaves=leaveNames, cleaves=.2, 
+                               circle=.8, circle.motif=1.2, clabel.leaves=1, 
+                               motifScale="logarithmic", angle=358, init.angle=-45,
+                               plotIndex=F)
+```
+
+
+```{r motifSig.cloud, fig.width=8, fig.height=8, dpi=72, fig.cap=fn("motif signature cloud"), echo=FALSE}
+pcmpath <- "pcmsDatasetFlyMousePBMHuman"
+pcms <- readPCM(pcmpath)
+pcms <- safeColor(pcms)
+pfms<-lapply(pcms,pcm2pfm)
+system(paste("perl", MatAlign2tree_path, "--in . --pcmpath", pcmpath, "--out", outpath,
+             "--matalign", matalign_path, "--neighbor", neighbor_path, "--tree","UPGMA"))
+newickstrUPGMA <- readLines(con=file.path(outpath, "NJ.matalign.distMX.nwk"))
+phylog <- newick2phylog(newickstrUPGMA, FALSE)
+leaves <- names(phylog$leaves)
+motifs <- pfms[leaves]
+motifSig <- motifSignature(motifs, phylog, groupDistance=1, min.freq=1)
+sig <- signatures(motifSig)
+motifCloud(motifSig, layout="cloud")
+```
+
+```{r single.motif, fig.width=6, fig.height=3, dpi=72, fig.cap=fn("single DNA motif"), echo=FALSE}
+plot(pfms[["Dm_abd_A"]])
+```
+
+```{r motif.Stack, fig.width=10, fig.height=5, dpi=72, fig.cap=fn("stack layout"), echo=FALSE}
+selected <- c('Mm_Dlx3', 'Hs_RAX')
+sel <- pfms[selected]
+plotMotifLogoStack(sel)
+```
+
+```{r motif.treeview, fig.width=6, fig.height=8, dpi=72, fig.cap=fn("motif with vertical tree"), echo=FALSE}
+selected <- c('Dm_al', 'Dm_Rx', 'Dm_otp', 'Dm_Lim1', 'Dm_PHDP', 'Dm_achi')
+sel <- pfms[selected]
+motifStack(sel, layout="treeview")
+```
+
+```{r protein.Stack, fig.width=10, fig.height=5, fig.cap=fn("protein motifs"), echo=FALSE}
+protein.name <- dir("protein")
+proteins <- lapply(file.path("protein", protein.name), read.table)
+for(i in 1:length(proteins)) proteins[[i]] <- t(proteins[[i]][,1:20])
+pcms <- mapply(function(.ele, .name) new("pcm", mat=.ele, name=.name, color=colorset(alphabet="AA", colorScheme="chemistry")), proteins, gsub(".txt$", "", protein.name))
+pcms <- safeColor(pcms)
+pfms <- lapply(pcms, pcm2pfm)
+pfms[[2]]@mat <- pfms[[2]]@mat[,60:85]
+pfms[[1]]@mat <- pfms[[1]]@mat[,7:26]
+plotMotifLogoStack(pfms)
+```
+
+```{r single.protein, fig.width=6, fig.height=3, fig.cap=fn("single protein motif"), echo=FALSE}
+plot(pfms[[1]])
+```
+
+
