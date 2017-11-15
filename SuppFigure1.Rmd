@@ -80,11 +80,11 @@ sig <- signatures(motifSig)
 motifCloud(motifSig, layout="cloud")
 ```
 
-```{r single.motif, fig.width=6, fig.height=3, dpi=72, fig.cap=fn("single DNA motif"), echo=FALSE}
+```{r single.motif, fig.width=9, fig.height=3, dpi=72, fig.cap=fn("single DNA motif"), echo=FALSE}
 plot(pfms[["Dm_abd_A"]])
 ```
 
-```{r motif.Stack, fig.width=10, fig.height=5, dpi=72, fig.cap=fn("stack layout"), echo=FALSE}
+```{r motif.Stack, fig.width=9, fig.height=3, dpi=72, fig.cap=fn("stack layout"), echo=FALSE}
 selected <- c('Mm_Dlx3', 'Hs_RAX')
 sel <- pfms[selected]
 plotMotifLogoStack(sel)
@@ -96,7 +96,7 @@ sel <- pfms[selected]
 motifStack(sel, layout="treeview")
 ```
 
-```{r protein.Stack, fig.width=10, fig.height=5, fig.cap=fn("protein motifs"), echo=FALSE}
+```{r protein.Stack, fig.width=11, fig.height=5, fig.cap=fn("protein motifs"), echo=FALSE}
 protein.name <- dir("protein")
 proteins <- lapply(file.path("protein", protein.name), read.table)
 for(i in 1:length(proteins)) proteins[[i]] <- t(proteins[[i]][,1:20])
@@ -108,7 +108,7 @@ pfms[[1]]@mat <- pfms[[1]]@mat[,7:26]
 plotMotifLogoStack(pfms)
 ```
 
-```{r single.protein, fig.width=6, fig.height=3, fig.cap=fn("single protein motif"), echo=FALSE}
+```{r single.protein, fig.width=9, fig.height=3, fig.cap=fn("single protein motif"), echo=FALSE}
 plot(pfms[[1]])
 ```
 
