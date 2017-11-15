@@ -86,7 +86,7 @@ legend(-2.45, 2.45, legend=c("Mm/Uniprobe/PBM/Seed-And-Wobble", "Mm/CIS-BP/PBM/D
 
 text(1.95, 2.3, labels="Information Content", cex = .4)
 rasterImage(icgp.image, 1.89, 1.8, 1.95, 2.2, interpolate = FALSE)
-text(c(1.96, 2.01), c(1.75, 2.2), labels=format(icgp.ranges, digits=3), adj=0, cex = .4)
+text(c(1.96, 1.96), c(1.8, 2.2), labels=format(icgp.ranges, digits=3), adj=0, cex = .4)
 dev.off()
 
 detach(MmPBM_SELEX)
