@@ -12,9 +12,6 @@ output:
 ##load the library
 library(motifStack)
 source("safeColor.R")
-colorSet <- c("Dm"="#009E73", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
-              "Mm"="#D55E00", "MmDREAM"="blue", "Ms"="#E69F00", 
-              "Hs"="#CC79A7")
 
 ## function to read example data
 readDataDoAna <- function(pcmpath, outpath="output", groupDistance=2.5, trim=0.2){

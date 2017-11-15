@@ -12,7 +12,13 @@ output:
     toc: no
 ---
 
-### Supplemental Figure 3. Comparison of motifs using MatAlign (3B) or MotIV (3C) between human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in turquoise) HD domain proteins.The length of tree branches reflect motif distances. Clusters are numbered by size, with the largest group listed as cluster 1. Motifs from the human and mouse often grouped by species despite the relatively small evolutionary distance between these organisms. This observation suggests that the motif generation method can have a substantial impact on motif clustering.
+__Supplemental Figure 3A__: A linear dendrogram of all Drosophila HD motifs illustrates how motifStack can be used to visualize the relationships between TF motifs, including aligned motifs for individual TFs (center) and motif signatures for motif clusters (far right), where the logo size scales with the number of members within the cluster. Motif clusters are determined using a distance threshold of 2 (dashed magenta line), and are delineated using alternating light and dark grey bars that are numbered based on cluster size.
+
+__Supplemental Figure 3B__: Alignment of motifs from fly, mouse and human by MatAlign. Joint comparison of motifs with MatAlign using motifs from human (SELEX data, colored in brown), mouse (PBM data, colored in purple) and fly (B1H data, colored in turquoise) HD domain proteins. The length of tree branches reflect motif distances. Motif clusters determined with a distance threshold of 2.5 are indicated by the alternating light and dark grey bars that are numbered by size, with the largest group listed as cluster 1. A single merged motif is shown for each cluster.
+
+__Supplemental Figure 3C__: Alignment of motifs from fly, mouse and human by MotIV. Joint comparison of motifs with MotIV using a distance threshold of 0.005 with the same data sets and display settings as Supplemental Figure 3B.
+
+__Supplemental Figure 3D__: HD motifs of Engrailed homologs from Drosophila, mouse and human illustrates how different experimental and computational methods can influence the resulting binding site motifs for orthologous proteins. Motif clusters are determined using a distance threshold of 2 (dashed magenta line). Dm/FFS/B1H (colored in turquoise) represents fly B1H binding site data. Hs/CIS-BP/SELEX (colored in purple) represents human SELEX data. Mm/Uniprobe/PBM/Seed-And-Wobble (colored in magenta) represents mouse PBM data analyzed by the Seed and Wobble motif discovery tool. Mm/CIS-BP/PBM/Dream5 (colored in blue) is mouse PBM data analyzed by the Dream5 motif discovery tool.
 
 
 ```{r setup, include=FALSE, echo=FALSE}
@@ -28,9 +34,6 @@ opts_chunk$set(warning=FALSE, message=FALSE)
 ```{r loadLib, message=FALSE, warning=FALSE, error=FALSE, echo=FALSE}
 library(motifStack)
 source("safeColor.R")
-colorSet <- c("Dm"="#009E73", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
-              "Mm"="#D55E00", "MmDREAM"="#56B4E9", "Ms"="#E69F00", 
-              "Hs"="#CC79A7")
 
 outpath <- "output"
 matalign_path <- "./app/matalign-v4a"

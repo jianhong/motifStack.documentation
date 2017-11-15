@@ -12,9 +12,9 @@ output:
     toc: no
 ---
 
-##Motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data), orange (mouse/SELEX) and turquoise (Fly/B1H data).
+Motifs in the HD family are shown in purple (Human/SELEX data), brown (Mouse/PBM data), orange (mouse/SELEX) and turquoise (Fly/B1H data).
 
-##Some of the HD TFs in the SELEX dataset have both monomeric and dimeric motifs. We have aligned the dimeric motif clusters with the associated monomeric motif clusters for the same TFs. Examples of these motif clusters include the ALX1/PHOX2 cluster (Supplementary Figure 5A), the BarH cluster (Supplementary Figure 5B), the EMX cluster (Supplementary Figure 5C), the En/GBX cluster (Supplementary Figure 5D), the IRX cluster (Supplementary Figure 5E), the MSX cluster (Supplementary Figure 5F) and the Cphx cluster (Supplementary Figure 5G).  Generally, members of a dimeric motif cluster have a monomeric motif that clusters with a fly HD, suggesting that the absence of a fly TF in a dimeric cluster may be a methodological difference rather than a biological one.
+Some of the HD TFs in the SELEX dataset have both monomeric and dimeric motifs. We have aligned the dimeric motif clusters with the associated monomeric motif clusters for the same TFs. Examples of these motif clusters include the ALX1/PHOX2 cluster (__Supplementary Figure 5A__), the BarH cluster (__Supplementary Figure 5B__), the EMX cluster (__Supplementary Figure 5C__), the En/GBX cluster (__Supplementary Figure 5D__), the IRX cluster (__Supplementary Figure 5E__), the MSX cluster (__Supplementary Figure 5F__) and the Cphx cluster (__Supplementary Figure 5G__).  Generally, members of a dimeric motif cluster have a monomeric motif that clusters with a fly HD, suggesting that the absence of a fly TF in a dimeric cluster may be a methodological difference rather than a biological one.
 
 ```{r setup, include=FALSE, echo=FALSE}
 library(knitr)
@@ -61,9 +61,6 @@ pcmpath <- dir("pcmsUni", include.dirs=TRUE)[1:7]
 matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
                       getMatAlignOut, groupDistance=4)
 description <- ""
-colorSet <- c("Dm"="#009E73", 
-              "Mm"="#D55E00", "Ms"="#E69F00", 
-              "Hs"="#CC79A7")
 ```
 
 ```{r expand, echo=FALSE}

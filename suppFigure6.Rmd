@@ -56,9 +56,6 @@ getMatAlignOut <- function(pcmpath, groupDistance=2.5, trim=0.2){
 pcmpath <- dir("pcmsUni", include.dirs=TRUE)[12]
 matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
                       getMatAlignOut, groupDistance=4)
-colorSet <- c("Dm"="#009E73", 
-              "Mm"="#D55E00", "Ms"="#E69F00", 
-              "Hs"="#CC79A7")
 
 ```
 

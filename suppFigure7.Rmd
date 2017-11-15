@@ -56,9 +56,6 @@ pcmpath <- dir("pcmsUni", include.dirs=TRUE)[13]
 matAlignOut <- lapply(file.path("pcmsUni", pcmpath), 
                       getMatAlignOut, groupDistance=4)
 description <- ""
-colorSet <- c("Dm"="#009E73", 
-              "Mm"="#D55E00", "Ms"="#E69F00", 
-              "Hs"="#CC79A7")
 ```
 
 ```{r expand, echo=FALSE}
@@ -89,10 +86,6 @@ sta <- mapply(function(.ele, name, ID, des){
 ```
 
 ```{r echo=FALSE}
-colorSet <- c("Dm"="#009E73", "b1h"="#00FC00", "sw"="#008080", "bml"="darkgreen", 
-              "Mm"="#D55E00", "MmDREAM"="blue", "Ms"="#E69F00", 
-              "Hs"="#CC79A7")
-
 ## function to read example data
 readDataDoAna <- function(pcmpath, groupDistance=2.5, trim=0.2){
     pcms <- readPCM(pcmpath)
@@ -129,6 +122,7 @@ Fly_DNA <- readDataDoAna("pcmsDatasetFly", groupDistance=gpDis)
 unUnique <- Fly_DNA$sig
 
 pcms <- readPCM(file.path("pcmsUni", "14.UniqueCleanCluster"))
+pcms <- safeColor(pcms)
 dimmer <- sapply(pcms, motifStack:::isHomoDimer)
 pcms.mono <- lapply(pcms[dimmer], function(.ele){
     pos <- motifStack:::getHomoDimerCenter(.ele)
