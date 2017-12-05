@@ -9,3 +9,4 @@ tools::texi2pdf('suppFigure2.tex', clean = TRUE)
 file.remove('suppFigure2.tex')
 unlink("figure", recursive = TRUE)
 unlink("suppFigure2_files", recursive = TRUE)
+

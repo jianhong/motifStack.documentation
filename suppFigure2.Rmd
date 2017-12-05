@@ -1,26 +1,29 @@
 ---
-title: "Supplementary Figure 2. Example Code Snippets for Visualizing Motif Alignments with motifStack "
 output:
   pdf_document:
     fig_caption: yes
-    toc: yes
+    toc: no
     keep_tex: yes
     includes:
       in_header: header.tex
   html_document:
     fig_caption: yes
     self_contained: no
-    toc: yes
+    toc: no
 ---
 ```{r setup, include=FALSE}
 fn = local({
   function(x, letter, auto=FALSE) {
-    paste('__Supplementary Figure 2', letter, '__: ', x, sep = '')
+    paste('__Supplementary Figure 2', letter, '__. ', x, sep = '')
   }
 })
 library(knitr)
 opts_chunk$set(warning=FALSE, message=FALSE)
 ```
+
+Here we demonstrate the typical workflows for the analysis and visualization of TF DNA binding site motifs using _motifStack_. We provide examples of the specific commands to plot aligned motifs as a stack, a linear/radial tree, or a word cloud of sequence logos with various coloringoptions. The colors used here are recommended to improve accessibility for colorblind readers.
+
+First, load the library, then read pcms (position count matrix), which is converted to pfm (position frequency matrices) subsequently.
 
 
 ```{r inputdata, message=FALSE, warning=FALSE, error=FALSE}
@@ -37,9 +40,10 @@ pcms <- safeColor(pcms)
 pfms<-lapply(pcms,pcm2pfm)
 ```
 
-## Supplementary Figure 2A-D. Examples of linear and radial dendrograms and code to generate them.
+## Examples of linear and radial dendrograms and code to generate them.
 
 ### Plot motifs as a stack with nucleotides drawn proportional to their information content (IC).
+
 ```{r stackLayout, fig.width=6, fig.height=6, dpi=72, fig.cap=fn("Plotted as a stack of motifs with nucleotides drawn proportional to their information content (IC)", "A")}
 subset_pfms <- pfms[10:15]
 motifStack(subset_pfms, layout="stack")
@@ -74,7 +78,7 @@ motifStack(pfms, layout="radialPhylog")
 
 \clearpage
 
-## Supplementary Figure 2E-G. Merge motifs with different distance cutoffs and display these motif signatures in various layouts.
+## Merge motifs with different distance cutoffs and display these motif signatures in various layouts.
 
 Before motifs are merged, the distances of the motifs are calculated using STAMP, MovIV or MatAlign. Here we show different ways to display the merged motifs and how different distance cutoffs affect the resulting motif sigatures. The magenta dotted line indicates the distance cutoff used.
 
@@ -144,7 +148,7 @@ motifCloud(motifSig[[1]], layout="cloud", scale=c(9, .75))
 
 \clearpage
 
-###Plot motif signatures as rectangular word clouds.
+### Plot motif signatures as rectangular word clouds.
 ```{r motifCloudRect, warning=FALSE, fig.width=3.5, fig.height=3.5, fig.cap=fn("Motif signatures plotted as rectangular word clouds using different motif distance cutoffs", "G")}
 ## motif cloud, rectangle style
 for(i in 1:2){
@@ -163,7 +167,7 @@ plot.new()
 
 \clearpage
 
-## Supplementary Figure 2H-M. Use various color options to highlight different motif features.
+## Use various color options to highlight different motif features.
 
 motifStack offers multiple options to color a radial tree: the background of the inner circle, the text of motif names, the background of the motif names, inner label rings and outer label rings. Here are a few examples using these options to show the motif's data source, the computational algorithm that generated the motifs, the motif's information content (IC) and the TF name. 
 
@@ -226,7 +230,7 @@ pcms <- safeColor(pcms)
 pfms<-lapply(pcms,pcm2pfm)
 ```
 
-###Use the background color of the inner circle to distinguish different data sources with the parameter col.bg.
+### Use the background color of the inner circle to distinguish different data sources with the parameter col.bg.
 ```{r colorsets1, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the background color of the inner circle to distinguish different data sources with the parameter col.bg", "H")}
 motIVout <- getMotIVOut(pfms, "PCC", "SWU")
 attach(motIVout)
@@ -244,7 +248,7 @@ legend(-2.3, 2.4, legend=c("Uniprobe", "CIS-BP"),
 
 \clearpage
 
-###Use the text color of motif names to distinguish the computational algorithm with the parameter col.leaves.
+### Use the text color of motif names to distinguish the computational algorithm with the parameter col.leaves.
 ```{r colorsets2, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the text color of motif names to distinguish the computational algorithms used with the parameter col.leaves", "I")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
@@ -258,7 +262,7 @@ legend(-2.3, 2.4, legend=c("DREAM5", "Seed-And-Wobble", "BEEML"),
 
 \clearpage
 
-###Use the background color of the motif names to distinguish motifs with high and low IC with the parameter col.leaves.bg.
+### Use the background color of the motif names to distinguish motifs with high and low IC with the parameter col.leaves.bg.
 ```{r colorsets3, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the background color of the motif names to distinguish motifs with high and low IC with the parameter col.leaves.bg", "J")}
 icgp <- ifelse(sapply(sapply(unaligned.pfms, getIC), mean) > 0.6, 
                "lightgray", "black")
@@ -277,7 +281,7 @@ legend(-2.3, 2.4,
 
 \clearpage
 
-###Use the inner ring color to distinguish the TF name with the parameter col.inner.label.circle.
+### Use the inner ring color to distinguish the TF name with the parameter col.inner.label.circle.
 ```{r colorsets4, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the inner ring color to distinguish the TFs with the parameter col.inner.label.circle", "K")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
@@ -295,7 +299,7 @@ legend(1.5, -2, legend=levels.motifGroup[13:21],
 
 \clearpage
 
-###Use the outer ring color to distinguish the TF names with the parameter col.outer.label.circle.
+### Use the outer ring color to distinguish the TF names with the parameter col.outer.label.circle.
 ```{r colorsets5, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use the outer ring color to distinguish the TFs with parameter col.outer.label.circle", "L")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=unaligned.pfms,
                             labels.leaves=leaveNames, 
@@ -314,7 +318,7 @@ legend(1.5, -2, legend=levels.motifGroup[13:21],
 
 \clearpage
 
-###Use a combination of coloring options to visualize multiple motif features.
+### Use a combination of coloring options to visualize multiple motif features.
 ```{r colorsets6, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Use a combination of coloring options to visualize multiple motif features", "M")}
 plotMotifStackWithRadialPhylog(phylog=phylog, pfms=aligned.pfms,
                                labels.leaves=leaveNames, 
@@ -336,7 +340,7 @@ detach(motIVout)
 
 \clearpage
 
-## Supplementary Figure 2N-O. Compare different Column Comparison Metrics (CCM) and aligment methods.
+## Compare different Column Comparison Metrics (CCM) and aligment methods.
 
 Here we used a subset of mouse HD TFs with PBM data. For each TF, we generated different motif alignments using different computational methods. We compared how well different CCM and alignment methods could group together the motifs from the same TFs. This example illustrates how to select the CCM and the alignment method (MotIV or MatAlign) and how different methods can affect the resulting alignment.
 
@@ -345,7 +349,7 @@ Average Log Likelihood Ratio (ALLR) was used as the CCM, and Smith-Waterman Unga
 
 To run the MatAlign examples, phylip (http://evolution.genetics.washington.edu/phylip/progs.data.dist.html) and MatAlign (http://stormo.wustl.edu/MatAlign/) need to be installed first. Alternatively, the Docker container described in the Supplementary Notes contains all needed dependencies. 
 
-###Visualize motif alignments generated by MotIV with different CCM and alignment methods.
+### Visualize motif alignments generated by MotIV with different CCM and alignment methods.
 ```{r MotIV, fig.width=3.5, fig.height=3.5, fig.cap=fn("Alignment of mouse PBM data by MotIV with different CCM and alignment methods", "N")}
 
 sta <- mapply(function(cc, align){
@@ -387,7 +391,7 @@ plot.new()
 
 The number (1:X; 2:Y; 3:Z) on the bottom of the Supplementary Figures 2O and 2P represents the number of motifs from the same TF grouped by different algorithms. 3:Z means that Z number of TFs with 3 of 3 motifs clustered together; 2:Y means that Y number of TFs with 2 of 3 motifs clustered together; 1:X means that X number of TFs failed to cluster any of the 3 motifs together. Thus, the lower the X and the higher the Y and Z, the better the method performed. In this example, MatAlign performed better than MotIV even using the same CCM (ALLR) and alignment method (SWU). 
 
-###Visualize motif alignments generated by MatAlign with ALLR as the MCC and SWU as the alignment method.
+### Visualize motif alignments generated by MatAlign with ALLR as the MCC and SWU as the alignment method.
 ```{r MatAlign, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Alignment of mouse PBM data by MatAlign", "O")}
 ##read newick tree. Alignment is done by MatAlign
 ##The newick tree is generated by Neighbor, which is a part of phylip
@@ -457,7 +461,7 @@ text(0, -2.3, label=paste(names(cnt.1), cnt.1, sep=":", collapse="; "), cex=1.5)
 
 \clearpage
 
-## Supplementary Figure 2P. Improved alignment of fly HD family motifs using MatAlign compared to MotIV. The MatAlign alignment method is superior for discriminating between the closely related motifs in the fly HD family.
+## Improved alignment of fly HD family motifs using MatAlign compared to MotIV. The MatAlign alignment method is superior for discriminating between the closely related motifs in the fly HD family.
 
 ```{r revolution.1, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("MotIV(ALLR and SWU) as the alignment method", "P.a")}
 pcmpath <- "pcmsDatasetDM"
@@ -526,7 +530,7 @@ text(0, 2.4, label="MatAlign", cex=1.5)
 
 \clearpage
 
-## Supplementary Figure 2Q. Import PFMs/PCMs files in Transfac, CisBP, or JASPAR format in batch mode.
+## Import PFMs/PCMs files in Transfac, CisBP, or JASPAR format in batch mode.
 
 ```{r importMatrix, fig.width=12, fig.height=12, dpi=72, fig.cap=fn("Aligned motifs imported from PFMs/PCMs files in Transfac, CisBP, or JASPAR format in batch mode.", "Q"), message=FALSE, warning=FALSE, error=FALSE}
 path <- system.file("extdata", package = "motifStack", mustWork = TRUE)
@@ -544,7 +548,7 @@ motifStack(motifs, layout = "phylog")
 
 \clearpage
 
-## Supplementary Figure 2R. Plot an affinity logo from a position specific affinity matrix (PSAM) as described by Foat et al. (Barrett C. Foat, Alexandre V. Morozov, Harmen J. Bussemaker; Statistical mechanical modeling of genome-wide transcription factor occupancy data by MatrixREDUCE, Bioinformatics, Volume 22, Issue 14, 15 July 2006, Pages e141-e149, https://doi.org/10.1093/bioinformatics/btl223).
+## Plot an affinity logo from a position specific affinity matrix (PSAM) as described by Foat et al. (Barrett C. Foat, Alexandre V. Morozov, Harmen J. Bussemaker; Statistical mechanical modeling of genome-wide transcription factor occupancy data by MatrixREDUCE, Bioinformatics, Volume 22, Issue 14, 15 July 2006, Pages e141-e149, https://doi.org/10.1093/bioinformatics/btl223).
 
 ```{r plotAffinityLogo, fig.width=12, fig.height=4, dpi=72, fig.cap=fn("PSAM plotted as an affinity logo.", "R"), message=FALSE, warning=FALSE, error=FALSE}
 psam <- importMatrix(file.path(path, "PSAM.mxr"), format = "psam")[[1]]
